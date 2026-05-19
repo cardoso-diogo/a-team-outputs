@@ -15,12 +15,19 @@
 <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"></script>
+<!-- Supabase JS Client -->
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel" data-presets="react">
 const { useState, useEffect, useMemo } = React;
 
+// --- SUPABASE CONFIGURATION ---
+const SUPABASE_URL = 'https://emiixsonbmwyxaqzutie.supabase.co/rest/v1/';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtaWl4c29uYm13eXhhcXp1dGllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxNzIwNTcsImV4cCI6MjA5NDc0ODA1N30.hO67RsdD3-np7Bwne1NDGaG8V3e4_haqvkqm4lelcs8';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// ------------------------------
 
 // Inline SVG icons (Lucide-style)
 const makeIcon = (paths) => ({ size = 16, strokeWidth = 2, className = "", ...rest }) => (
@@ -119,7 +126,7 @@ const Trash2 = makeIcon([
 ]);
 
 
-const SEED_DATA = [{"id":"out_0","project":"NSP-Fundamental Research","owner":"AC","output":"Technology forecasting methodology definition","notes":"","years":{"2025":{"original":"Q1","current":"Q3","missed":1}},"status":"done","lt":"AC","slippages":1},{"id":"out_1","project":"NSP-Fundamental Research","owner":"AC","output":"Software tool for technology forecasting based on patent information","notes":"","years":{"2024":{"original":"Q4","current":"Q4","missed":1},"2025":{"original":"Q1","current":"Q1","missed":0}},"status":"done","lt":"DG","slippages":1},{"id":"out_2","project":"NSP-Fundamental Research","owner":"AC","output":"ISM Process Concept","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":0}},"status":"done","lt":"JM","slippages":0},{"id":"out_3","project":"NSP-Fundamental Research","owner":"AC","output":"ISM technologies mapping","notes":"","years":{"2025":{"original":"Q2","current":"Q3","missed":1}},"status":"done","lt":"JS","slippages":1},{"id":"out_4","project":"Labcomp - infraestrutura","owner":"AC","output":"Sistema de guiamento de fibra para cabeça de Enrolamento Filamentar","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":0},{"id":"out_5","project":"EDF-Major","owner":"AC","output":"Ballistic armour requirements document","notes":"","years":{"2026":{"original":"Q2","current":"Q2","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_6","project":"EDF-Major","owner":"AC","output":"Ballistic armour materials and technology selection document","notes":"","years":{"2026":{"original":"Q4","current":"Q4","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_7","project":"EDF-Major","owner":"AC","output":"Ballistic armour joinning samples","notes":"","years":{"2027":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_8","project":"EDF-Major","owner":"AC","output":"ballistic armour configurantion / detailed design","notes":"","years":{"2027":{"original":"Q3","current":"Q3","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_9","project":"EDF-Major","owner":"AC","output":"Ballist armour lab-scale production line","notes":"","years":{},"status":"waiting","lt":"","slippages":0},{"id":"out_10","project":"EDF-Major","owner":"AC","output":"Sustainable add-on ballistic armour prototype","notes":"","years":{"2028":{"original":"Q4","current":"Q4","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_11","project":"NSP-P3","owner":"AC","output":"Thermoplastic Cube-Sat Manufacturing & Assembly Process Development (Stamping/Overmoulding/Welding)","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":1},{"id":"out_12","project":"TII","owner":"AC","output":"Type V Manufacturing Report","notes":"","years":{"2024":{"original":"Q4","current":"Q4","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_13","project":"TII","owner":"AC","output":"Type V Pressure Vessel","notes":"","years":{"2024":{"original":"Q4","current":"Q4","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_14","project":"SMARTCODE","owner":"AC","output":"Contribution for MVP arquitecture definition (processes and software) reports","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":0},{"id":"out_15","project":"SMARTCODE","owner":"AC","output":"Report of MVP development, implementation, and achieved results","notes":"","years":{"2027":{"original":"Q3","current":"Q3","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_16","project":"SMARTCODE","owner":"AC","output":"ML model for temperature adjustment of in-situ AFP processes","notes":"","years":{"2027":{"original":"Q2","current":"Q2","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_17","project":"CONCERTO","owner":"AC","output":"Buldge test specimens","notes":"","years":{"2025":{"original":"Q3","current":"Q3","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_18","project":"CONCERTO","owner":"AC","output":"Half-tank for cryogenic testing","notes":"","years":{"2025":{"original":"Q2","current":"Q4","missed":1}},"status":"done","lt":"","slippages":1},{"id":"out_19","project":"pAIramid","owner":"DG","output":"Continuous fiber Filament","notes":"T2.2  - D 2.2 Formulation and characterization of functionalized Thermoplastic","years":{"2025":{"original":"Q3","current":"Q3","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":1},{"id":"out_20","project":"pAIramid","owner":"DG","output":"FDM heating system","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":0},{"id":"out_21","project":"pAIramid","owner":"DG","output":"FDM Head installation and validation","notes":"T3.2 (requesito inicio T4.4)","years":{"2025":{"original":"Q4","current":"Q4","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":1},{"id":"out_22","project":"pAIramid","owner":"DG","output":"Continuous fiber Filament with modified matrix (multifunctional)","notes":"T2.2  - D 2.2 Formulation and characterization of functionalized Thermoplastic","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_23","project":"pAIramid","owner":"DG","output":"FDM process with continuous fibres filament (samples)","notes":"T3.1 - D3.2 FDM process setup and methodology development","years":{"2026":{"original":"Q2","current":"Q2","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_24","project":"pAIramid","owner":"DG","output":"FDM manufacturing of a demonstrator for Vertical Stabilizer Box Fairing - laminados","notes":"T7.1 - D7.1. Lessons learnt from Use Case 1 [output T7.1]","years":{"2028":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_25","project":"pAIramid","owner":"DG","output":"FDM manufacturing of a demonstrator thermal heater plate for a Wing leading edge","notes":"T7,3 - D7.3. Lessons learnt from Use Case 3 [output T7.3","years":{"2028":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_26","project":"pAIramid","owner":"DG","output":"Manufacturing of a Wing leading edge demonstrator","notes":"T7.3 - D7.3. Lessons learnt from Use Case 3 [output T7.3","years":{"2028":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_27","project":"Eurecomp","owner":"DG","output":"Processo de produção de fibre mats com fibras curtas recicladas (desalinhadas)","notes":"","years":{"2025":{"original":"Q2","current":"Q2","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_28","project":"Eurecomp","owner":"DG","output":"Processo de alinhamento de fibras curtas para produção de fibre mats","notes":"","years":{"2025":{"original":"Q3","current":"Q4","missed":1}},"status":"done","lt":"","slippages":1},{"id":"out_29","project":"Eurecomp","owner":"DG","output":"Fibre mats production and testing","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":1},{"id":"out_30","project":"NSP","owner":"DG","output":"Demonstrador - conductive Patch","notes":"","years":{"2025":{"original":"Q3","current":"Q3","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_31","project":"Potential","owner":"DG","output":"Conceito de Processo/componente para in-mold Assembly e automação","notes":"T2.1 - D2.1 Geração e seleção de conceitos","years":{"2025":{"original":"Q3","current":"Q3","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_32","project":"FLASHCOMP","owner":"JM","output":"Digital twin for vacuum infusion","notes":"","years":{"2025":{"original":"Q1","current":"Q1","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_33","project":"FLASHCOMP","owner":"JM","output":"Process design validation (PAM-RTM)","notes":"","years":{"2024":{"original":"Q4","current":"Q4","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_34","project":"FLASHCOMP","owner":"JM","output":"Fully operational Test bed","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":1},{"id":"out_35","project":"Maria-Bike","owner":"JM","output":"Manufacturing process design & report","notes":"","years":{"2025":{"original":"Q1","current":"Q2","missed":1}},"status":"done","lt":"","slippages":1},{"id":"out_36","project":"Maria-Bike","owner":"JM","output":"Mariabike  prototypes (composite shells)","notes":"","years":{"2025":{"original":"Q2","current":"Q2","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_37","project":"Maria-Bike","owner":"JM","output":"Maria bike prototype assembled (composite structure)","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":1},{"id":"out_38","project":"Maria-Bike","owner":"JM","output":"Industrialization line dossie","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_39","project":"pAIramid","owner":"JM","output":"FDM process model","notes":"T4.4 - D4.4. FDM process simulation report [Report including description of models and simulation results]","years":{"2026":{"original":"Q4","current":"Q4","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_40","project":"SmaRTM","owner":"JM","output":"Análise FMEA","notes":"","years":{"2025":{"original":"Q1","current":"Q1","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_41","project":"SmaRTM","owner":"JM","output":"Validação experimental molde RTM","notes":"","years":{"2025":{"original":"Q2","current":"Q4","missed":1}},"status":"done","lt":"","slippages":1},{"id":"out_42","project":"SmaRTM","owner":"JM","output":"Componente protótipo","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_43","project":"EcoSat","owner":"JM","output":"Sustainable satellite structurure manufacturing assessment report (contribution)","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_44","project":"HERA","owner":"JPS","output":"Relatório testes permeabilidade in-plane","notes":"","years":{"2025":{"original":"Q1","current":"Q1","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_45","project":"HERA","owner":"JPS","output":"Scientic Paper #1 | On the enhancement  and tailoring of process-related quality and variability characteristics of thin-ply ADFP dry preforms","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":1},{"id":"out_46","project":"HERA","owner":"RP","output":"Wise dry preforms -  LCM performance assessment document","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":1},"2026":{"original":"Q2","current":"Q2","missed":0}},"status":"waiting","lt":"","slippages":1},{"id":"out_47","project":"HERA","owner":"JPS","output":"Scientific Paper #2 | Performance and Cost-Efficiency comparative analysis of ADFP Thin-Ply Composites and AFP/ATL Prepreg Composites","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":0},{"id":"out_48","project":"HERA","owner":"JPS","output":"Cool Autoclave performance assessment","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_49","project":"HERA","owner":"RP","output":"Wise dry preforms -  Mechanical performance assessment document","notes":"","years":{"2026":{"original":"Q2","current":"Q2","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_50","project":"HERA","owner":"RP","output":"Sustainable manufacturing experimental campaign report","notes":"","years":{"2026":{"original":"Q3","current":"Q3","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_51","project":"Embalagem do Futuro","owner":"JS","output":"Relatório de Testes e ensaios Laboratoriais","notes":"E4.3 - Configurações otimizadas","years":{"2025":{"original":"Q1","current":"Q3","missed":1}},"status":"done","lt":"","slippages":1},{"id":"out_52","project":"Embalagem do Futuro","owner":"JS","output":"Análise ANOVA","notes":"E4.3 - Configurações otimizadas","years":{"2025":{"original":"Q2","current":"Q3","missed":1}},"status":"done","lt":"","slippages":1},{"id":"out_53","project":"Embalagem do Futuro","owner":"JS","output":"Relatório validação parametros otimizados | Balde","notes":"","years":{"2025":{"original":"Q3","current":"Q4","missed":2},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":2},{"id":"out_54","project":"Embalagem do Futuro","owner":"JS","output":"Relatório validação parametros otimizados | Marmita","notes":"E4.3 - Configurações otimizadas","years":{"2025":{"original":"Q4","current":"Q4","missed":1}},"status":"at_risk","lt":"","slippages":1},{"id":"out_55","project":"Material Circulante","owner":"JM","output":"Definição de estratégias de infusão para máscara frontal do comboio","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":1},{"id":"out_56","project":"Material Circulante","owner":"JM","output":"Ajuda no desenvolvimento, construção e montagem de painéis interiores de comboio","notes":"","years":{"2025":{"original":"Q2","current":"Q4","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":1},{"id":"out_57","project":"R2U","owner":"MM","output":"Industrialização e otimização de parâmetros de termoformação para termoplásticos","notes":"","years":{"2025":{"original":"Q2","current":"Q2","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_58","project":"Material Circulante","owner":"JM","output":"Projeto de molde de medição de permeabilidade de reforços","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_59","project":"R2U","owner":"MM","output":"Relatório | Ajuda no desenvolvimento, construção e montagem de painéis de WC modular","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_60","project":"IOANT","owner":"MM","output":"Design and machining | reaction wheel components","notes":"","years":{"2025":{"original":"Q2","current":"Q4","missed":1}},"status":"done","lt":"","slippages":1},{"id":"out_61","project":"AEROGANP","owner":"MM","output":"Desenho e fabrico de componentes de suporte para gimble","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_62","project":"ATE","owner":"MM","output":"Design contentor","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":0},{"id":"out_63","project":"Equipa Processos","owner":"JM","output":"Ferramenta de simulação LCM (OpenFoam)","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":0}},"status":"done","lt":"","slippages":0}];
+const SEED_DATA = [{"id":"out_0","project":"NSP-Fundamental Research","owner":"AC","output":"Technology forecasting methodology definition","notes":"","years":{"2025":{"original":"Q1","current":"Q3","missed":1}},"status":"done","lt":"AC","slippages":1},{"id":"out_1","project":"NSP-Fundamental Research","owner":"AC","output":"Software tool for technology forecasting based on patent information","notes":"","years":{"2024":{"original":"Q4","current":"Q4","missed":1},"2025":{"original":"Q1","current":"Q1","missed":0}},"status":"done","lt":"DG","slippages":1},{"id":"out_2","project":"NSP-Fundamental Research","owner":"AC","output":"ISM Process Concept","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":0}},"status":"done","lt":"JM","slippages":0},{"id":"out_3","project":"NSP-Fundamental Research","owner":"AC","output":"ISM technologies mapping","notes":"","years":{"2025":{"original":"Q2","current":"Q3","missed":1}},"status":"done","lt":"JS","slippages":1},{"id":"out_4","project":"Labcomp - infraestrutura","owner":"AC","output":"Sistema de guiamento de fibra para cabeça de Enrolamento Filamentar","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":0},{"id":"out_5","project":"EDF-Major","owner":"AC","output":"Ballistic armour requirements document","notes":"","years":{"2026":{"original":"Q2","current":"Q2","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_6","project":"EDF-Major","owner":"AC","output":"Ballistic armour materials and technology selection document","notes":"","years":{"2026":{"original":"Q4","current":"Q4","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_7","project":"EDF-Major","owner":"AC","output":"Ballistic armour joinning samples","notes":"","years":{"2027":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_8","project":"EDF-Major","owner":"AC","output":"ballistic armour configurantion / detailed design","notes":"","years":{"2027":{"original":"Q3","current":"Q3","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_9","project":"EDF-Major","owner":"AC","output":"Ballist armour lab-scale production line","notes":"","years":{},"status":"waiting","lt":"","slippages":0},{"id":"out_10","project":"EDF-Major","owner":"AC","output":"Sustainable add-on ballistic armour prototype","notes":"","years":{"2028":{"original":"Q4","current":"Q4","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_11","project":"NSP-P3","owner":"AC","output":"Thermoplastic Cube-Sat Manufacturing & Assembly Process Development (Stamping/Overmoulding/Welding)","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":1},{"id":"out_12","project":"TII","owner":"AC","output":"Type V Manufacturing Report","notes":"","years":{"2024":{"original":"Q4","current":"Q4","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_13","project":"TII","owner":"AC","output":"Type V Pressure Vessel","notes":"","years":{"2024":{"original":"Q4","current":"Q4","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_14","project":"SMARTCODE","owner":"AC","output":"Contribution for MVP arquitecture definition (processes and software) reports","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":0},{"id":"out_15","project":"SMARTCODE","owner":"AC","output":"Report of MVP development, implementation, and achieved results","notes":"","years":{"2027":{"original":"Q3","current":"Q3","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_16","project":"SMARTCODE","owner":"AC","output":"ML model for temperature adjustment of in-situ AFP processes","notes":"","years":{"2027":{"original":"Q2","current":"Q2","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_17","project":"CONCERTO","owner":"AC","output":"Buldge test specimens","notes":"","years":{"2025":{"original":"Q3","current":"Q3","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_18","project":"CONCERTO","owner":"AC","output":"Half-tank for cryogenic testing","notes":"","years":{"2025":{"original":"Q2","current":"Q4","missed":1}},"status":"done","lt":"","slippages":1},{"id":"out_19","project":"pAIramid","owner":"DG","output":"Continuous fiber Filament","notes":"T2.2  - D 2.2 Formulation and characterization of functionalized Thermoplastic","years":{"2025":{"original":"Q3","current":"Q3","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":1},{"id":"out_20","project":"pAIramid","owner":"DG","output":"FDM heating system","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":0},{"id":"out_21","project":"pAIramid","owner":"DG","output":"FDM Head installation and validation","notes":"T3.2 (requesito inicio T4.4)","years":{"2025":{"original":"Q4","current":"Q4","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":1},{"id":"out_22","project":"pAIramid","owner":"DG","output":"Continuous fiber Filament with modified matrix (multifunctional)","notes":"T2.2  - D 2.2 Formulation and characterization of functionalized Thermoplastic","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_23","project":"pAIramid","owner":"DG","output":"FDM process with continuous fibres filament (samples)","notes":"T3.1 - D3.2 FDM process setup and methodology development","years":{"2026":{"original":"Q2","current":"Q2","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_24","project":"pAIramid","owner":"DG","output":"FDM manufacturing of a demonstrator for Vertical Stabilizer Box Fairing - laminados","notes":"T7.1 - D7.1. Lessons learnt from Use Case 1 [output T7.1]","years":{"2028":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_25","project":"pAIramid","owner":"DG","output":"FDM manufacturing of a demonstrator thermal heater plate for a Wing leading edge","notes":"T7,3 - D7.3. Lessons learnt from Use Case 3 [output T7.3","years":{"2028":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_26","project":"pAIramid","owner":"DG","output":"Manufacturing of a Wing leading edge demonstrator","notes":"T7.3 - D7.3. Lessons learnt from Use Case 3 [output T7.3","years":{"2028":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_27","project":"Eurecomp","owner":"DG","output":"Processo de produção de fibre mats com fibras curtas recicladas (desalinhadas)","notes":"","years":{"2025":{"original":"Q2","current":"Q2","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_28","project":"Eurecomp","owner":"DG","output":"Processo de alinhamento de fibras curtas para produção de fibre mats","notes":"","years":{"2025":{"original":"Q3","current":"Q4","missed":1}},"status":"done","lt":"","slippages":1},{"id":"out_29","project":"Eurecomp","owner":"DG","output":"Fibre mats production and testing","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":1},{"id":"out_30","project":"NSP","owner":"DG","output":"Demonstrador - conductive Patch","notes":"","years":{"2025":{"original":"Q3","current":"Q3","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_31","project":"Potential","owner":"DG","output":"Conceito de Processo/componente para in-mold Assembly e automação","notes":"T2.1 - D2.1 Geração e seleção de conceitos","years":{"2025":{"original":"Q3","current":"Q3","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_32","project":"FLASHCOMP","owner":"JM","output":"Digital twin for vacuum infusion","notes":"","years":{"2025":{"original":"Q1","current":"Q1","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_33","project":"FLASHCOMP","owner":"JM","output":"Process design validation (PAM-RTM)","notes":"","years":{"2024":{"original":"Q4","current":"Q4","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_34","project":"FLASHCOMP","owner":"JM","output":"Fully operational Test bed","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":1},{"id":"out_35","project":"Maria-Bike","owner":"JM","output":"Manufacturing process design & report","notes":"","years":{"2025":{"original":"Q1","current":"Q2","missed":1}},"status":"done","lt":"","slippages":1},{"id":"out_36","project":"Maria-Bike","owner":"JM","output":"Mariabike  prototypes (composite shells)","notes":"","years":{"2025":{"original":"Q2","current":"Q2","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_37","project":"Maria-Bike","owner":"JM","output":"Maria bike prototype assembled (composite structure)","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":1},{"id":"out_38","project":"Maria-Bike","owner":"JM","output":"Industrialization line dossie","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_39","project":"pAIramid","owner":"JM","output":"FDM process model","notes":"T4.4 - D4.4. FDM process simulation report [Report including description of models and simulation results]","years":{"2026":{"original":"Q4","current":"Q4","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_40","project":"SmaRTM","owner":"JM","output":"Análise FMEA","notes":"","years":{"2025":{"original":"Q1","current":"Q1","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_41","project":"SmaRTM","owner":"JM","output":"Validação experimental molde RTM","notes":"","years":{"2025":{"original":"Q2","current":"Q4","missed":1}},"status":"done","lt":"","slippages":1},{"id":"out_42","project":"SmaRTM","owner":"JM","output":"Componente protótipo","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_43","project":"EcoSat","owner":"JM","output":"Sustainable satellite structurure manufacturing assessment report (contribution)","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_44","project":"HERA","owner":"JS","output":"Relatório testes permeabilidade in-plane","notes":"","years":{"2025":{"original":"Q1","current":"Q1","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_45","project":"HERA","owner":"JS","output":"Scientic Paper #1 | On the enhancement  and tailoring of process-related quality and variability characteristics of thin-ply ADFP dry preforms","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":1},{"id":"out_46","project":"HERA","owner":"RP","output":"Wise dry preforms -  LCM performance assessment document","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":1},"2026":{"original":"Q2","current":"Q2","missed":0}},"status":"waiting","lt":"","slippages":1},{"id":"out_47","project":"HERA","owner":"JS","output":"Scientific Paper #2 | Performance and Cost-Efficiency comparative analysis of ADFP Thin-Ply Composites and AFP/ATL Prepreg Composites","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":0},{"id":"out_48","project":"HERA","owner":"JS","output":"Cool Autoclave performance assessment","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_49","project":"HERA","owner":"RP","output":"Wise dry preforms -  Mechanical performance assessment document","notes":"","years":{"2026":{"original":"Q2","current":"Q2","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_50","project":"HERA","owner":"RP","output":"Sustainable manufacturing experimental campaign report","notes":"","years":{"2026":{"original":"Q3","current":"Q3","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_51","project":"Embalagem do Futuro","owner":"JS","output":"Relatório de Testes e ensaios Laboratoriais","notes":"E4.3 - Configurações otimizadas","years":{"2025":{"original":"Q1","current":"Q3","missed":1}},"status":"done","lt":"","slippages":1},{"id":"out_52","project":"Embalagem do Futuro","owner":"JS","output":"Análise ANOVA","notes":"E4.3 - Configurações otimizadas","years":{"2025":{"original":"Q2","current":"Q3","missed":1}},"status":"done","lt":"","slippages":1},{"id":"out_53","project":"Embalagem do Futuro","owner":"JS","output":"Relatório validação parametros otimizados | Balde","notes":"","years":{"2025":{"original":"Q3","current":"Q4","missed":2},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":2},{"id":"out_54","project":"Embalagem do Futuro","owner":"JS","output":"Relatório validação parametros otimizados | Marmita","notes":"E4.3 - Configurações otimizadas","years":{"2025":{"original":"Q4","current":"Q4","missed":1}},"status":"at_risk","lt":"","slippages":1},{"id":"out_55","project":"Material Circulante","owner":"JM","output":"Definição de estratégias de infusão para máscara frontal do comboio","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":1},{"id":"out_56","project":"Material Circulante","owner":"JM","output":"Ajuda no desenvolvimento, construção e montagem de painéis interiores de comboio","notes":"","years":{"2025":{"original":"Q2","current":"Q4","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":1},{"id":"out_57","project":"R2U","owner":"MM","output":"Industrialização e otimização de parâmetros de termoformação para termoplásticos","notes":"","years":{"2025":{"original":"Q2","current":"Q2","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_58","project":"Material Circulante","owner":"JM","output":"Projeto de molde de medição de permeabilidade de reforços","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_59","project":"R2U","owner":"MM","output":"Relatório | Ajuda no desenvolvimento, construção e montagem de painéis de WC modular","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_60","project":"IOANT","owner":"MM","output":"Design and machining | reaction wheel components","notes":"","years":{"2025":{"original":"Q2","current":"Q4","missed":1}},"status":"done","lt":"","slippages":1},{"id":"out_61","project":"AEROGANP","owner":"MM","output":"Desenho e fabrico de componentes de suporte para gimble","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_62","project":"ATE","owner":"MM","output":"Design contentor","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":0},{"id":"out_63","project":"Equipa Processos","owner":"JM","output":"Ferramenta de simulação LCM (OpenFoam)","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":0}},"status":"done","lt":"","slippages":0}];
 
 function relativeTime(iso) {
   if (!iso) return "";
@@ -152,7 +159,6 @@ const QUARTER_MONTHS = {
   Q3: ["Jul", "Aug", "Sep"],
   Q4: ["Oct", "Nov", "Dec"],
 };
-// Team roster: full name → initials. Order matters for dropdown display.
 const TEAM_ROSTER = [
   { initials: "JS",  name: "João Silva" },
   { initials: "AC",  name: "Alexandre Chícharo" },
@@ -168,13 +174,9 @@ const TEAM_ROSTER = [
   { initials: "DC",  name: "Diogo Cardoso" },
 ];
 const ROSTER_BY_INITIALS = Object.fromEntries(TEAM_ROSTER.map(p => [p.initials, p.name]));
-// Legacy owner code remaps (JPS used to mean João Silva; merge into JS).
 const OWNER_REMAP = { JPS: "JS" };
 function normalizeOwner(o) { return OWNER_REMAP[o] || o; }
 
-// Migration: normalize any legacy data when it enters state.
-// - Owner JPS → JS (and same for any other remaps)
-// - Ensure validated, validatedAt, participants fields exist (added in v2 of the schema)
 function migrateData(arr) {
   if (!Array.isArray(arr)) return arr;
   return arr.map(d => ({
@@ -186,7 +188,6 @@ function migrateData(arr) {
     validatedAt: d.validatedAt || null,
   }));
 }
-const STORAGE_KEY = "team_outputs_v1";
 
 function yearsInRange(from, to) {
   const fi = ALL_YEARS.indexOf(from);
@@ -195,25 +196,27 @@ function yearsInRange(from, to) {
   return ALL_YEARS.slice(fi, ti + 1);
 }
 
-function loadFromStorage(setData, setLoading) {
-  (async () => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        setData(migrateData(JSON.parse(raw)));
-      } else {
-        setData(migrateData(SEED_DATA));
-      }
-    } catch {
-      setData(migrateData(SEED_DATA));
-    }
-    setLoading(false);
-  })();
-}
+// --- SUPABASE LOAD FUNCTION ---
+async function loadFromSupabase(setData, setLoading) {
+  try {
+    const { data, error } = await supabaseClient.from('outputs').select('*');
+    if (error) throw error;
 
-function saveToStorage(data) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
+    if (data && data.length > 0) {
+      setData(migrateData(data));
+    } else {
+      setData(migrateData(SEED_DATA));
+      // Uncomment the line below if you want to auto-seed the DB on first load:
+      // await supabaseClient.from('outputs').insert(migrateData(SEED_DATA));
+    }
+  } catch (error) {
+    console.error("Error loading data from Supabase:", error);
+    setData(migrateData(SEED_DATA));
+  } finally {
+    setLoading(false);
+  }
 }
+// ------------------------------
 
 function MultiSelect({ label, options, selected, onChange, allLabel = "Any" }) {
   const [open, setOpen] = useState(false);
@@ -347,8 +350,6 @@ function QuarterCell({ yearData, year, onEdit, status }) {
 }
 
 function Heatmap({ items, years }) {
-  // Build a grid: rows = owners, cols = year-quarter
-  // Each cell tracks: total, done, slipped (any missed > 0), inflight (in_progress/waiting), missed (total slip events)
   const owners = [...new Set(items.map(i => i.owner))].sort();
   const cols = [];
   years.forEach(y => QUARTERS.forEach(q => cols.push({ year: y, q })));
@@ -367,7 +368,7 @@ function Heatmap({ items, years }) {
       if (item.status === "at_risk") cell.atRisk += 1;
       else if (item.status === "done") cell.done += 1;
       else cell.inflight += 1;
-      if ((yd.missed || 0) > 0) cell.slipped += 1; // historical slip count, kept for tooltip
+      if ((yd.missed || 0) > 0) cell.slipped += 1; 
     });
   });
   const maxCount = Math.max(1, ...owners.flatMap(o => cols.map(c => matrix[o][`${c.year}-${c.q}`].total)));
@@ -388,8 +389,6 @@ function Heatmap({ items, years }) {
             {cols.map((c, i) => {
               const cell = matrix[o][`${c.year}-${c.q}`];
               const intensity = cell.total / maxCount;
-              // Color is driven by current status, not slip history.
-              // Red (at-risk) > Green (all done) > Amber (in-flight default)
               let tone = "empty";
               if (cell.total > 0) {
                 if (cell.atRisk > 0) tone = "slip";
@@ -431,7 +430,6 @@ function EditModal({ item, onClose, onSave, onDelete, existingProjects = [] }) {
       const yrs = { ...d.years };
       if (!yrs[year]) yrs[year] = { original: val, current: val, missed: 0 };
       const updated = { ...yrs[year], [field]: val };
-      // If quarter changed, clear the corresponding month if it's no longer in that quarter
       if (field === "original" && updated.originalMonth && !QUARTER_MONTHS[val].includes(updated.originalMonth)) {
         updated.originalMonth = "";
       }
@@ -526,7 +524,6 @@ function EditModal({ item, onClose, onSave, onDelete, existingProjects = [] }) {
                       style={{ "--pill-color": s.color }}
                       onClick={() => setDraft(d => {
                         const next = { ...d, status: s.code };
-                        // Auto-clear validation if status moves away from done
                         if (s.code !== "done" && d.validated) {
                           next.validated = false;
                           next.validatedAt = null;
@@ -717,13 +714,10 @@ function TeamOutputsApp() {
     try { localStorage.setItem("team_outputs_theme", theme); } catch {}
   }, [theme]);
 
+  // Load from Supabase on mount
   useEffect(() => {
-    loadFromStorage(setData, setLoading);
+    loadFromSupabase(setData, setLoading);
   }, []);
-
-  useEffect(() => {
-    if (!loading && data.length > 0) saveToStorage(data);
-  }, [data, loading]);
 
   const owners = useMemo(() => [...new Set(data.map(d => d.owner))].sort(), [data]);
   const projects = useMemo(() => [...new Set(data.map(d => d.project))].sort(), [data]);
@@ -752,7 +746,7 @@ function TeamOutputsApp() {
     const inRange = new Set(displayedYears);
     return data.filter(d => {
       const yrs = Object.keys(d.years || {});
-      if (yrs.length === 0) return true; // outputs without year plans stay visible
+      if (yrs.length === 0) return true;
       return yrs.some(y => inRange.has(y));
     });
   }, [data, displayedYears]);
@@ -778,13 +772,13 @@ function TeamOutputsApp() {
       if (d.status === "done") byOwner[d.owner].done++;
       else if (d.status === "in_progress") byOwner[d.owner].inflight++;
       else if (d.status === "at_risk") { byOwner[d.owner].inflight++; byOwner[d.owner].risk++; }
-      else byOwner[d.owner].waiting++; // waiting + unknown
+      else byOwner[d.owner].waiting++;
     });
     return Object.values(byOwner).sort((a, b) => {
       const aRate = a.total > 0 ? a.done / a.total : 0;
       const bRate = b.total > 0 ? b.done / b.total : 0;
       if (bRate !== aRate) return bRate - aRate;
-      return b.done - a.done; // tiebreak by absolute count
+      return b.done - a.done;
     });
   }, [dashboardItems]);
 
@@ -800,17 +794,26 @@ function TeamOutputsApp() {
     return Object.values(byProj).sort((a, b) => b.slips - a.slips || b.risk - a.risk);
   }, [dashboardItems]);
 
-  const handleSave = (updated) => {
+  // --- SUPABASE UPSERT ---
+  const handleSave = async (updated) => {
+    // Optimistic UI Update
     setData(d => {
       const exists = d.some(x => x.id === updated.id);
       return exists ? d.map(x => x.id === updated.id ? updated : x) : [...d, updated];
     });
     setEditItem(null);
+
+    // Sync to DB
+    const { error } = await supabaseClient.from('outputs').upsert(updated);
+    if (error) {
+      console.error("Error saving to Supabase:", error);
+      alert("Failed to save changes to the database.");
+    }
   };
 
   const handleAddNew = () => {
     const newItem = {
-      id: "new_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
+      id: "out_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
       project: "",
       owner: "",
       output: "",
@@ -824,15 +827,32 @@ function TeamOutputsApp() {
     setEditItem(newItem);
   };
 
-  const handleDelete = (id) => {
-    if (!confirm("Delete this output? This cannot be undone (unless you have a saved file backup).")) return;
+  // --- SUPABASE DELETE ---
+  const handleDelete = async (id) => {
+    if (!confirm("Delete this output? This cannot be undone.")) return;
+    
+    // Optimistic UI Update
     setData(d => d.filter(x => x.id !== id));
     setEditItem(null);
+
+    // Sync to DB
+    const { error } = await supabaseClient.from('outputs').delete().eq('id', id);
+    if (error) {
+      console.error("Error deleting from Supabase:", error);
+      alert("Failed to delete the item from the database.");
+    }
   };
 
-  const handleReset = () => {
-    if (confirm("Clear ALL outputs? This empties the tracker completely.\n\nMake sure you've saved a backup file first if you want to keep this data.")) {
+  // --- SUPABASE CLEAR DB ---
+  const handleReset = async () => {
+    if (confirm("Clear ALL outputs? This empties the tracker completely in the database.")) {
       setData([]);
+      
+      const { error } = await supabaseClient.from('outputs').delete().neq('id', 'prevent_empty_delete_error');
+      if (error) {
+        console.error("Error clearing database:", error);
+        alert("Failed to clear database.");
+      }
     }
   };
 
@@ -868,19 +888,17 @@ function TeamOutputsApp() {
 
   const handleImport = (e) => {
     const file = e.target.files && e.target.files[0];
-    e.target.value = ""; // reset so same file can be re-selected
+    e.target.value = ""; 
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = () => {
+    reader.onload = async () => {
       try {
         const parsed = JSON.parse(reader.result);
-        // Accept either the wrapped {_meta, outputs} shape, or a bare array
         const incoming = Array.isArray(parsed) ? parsed : (parsed.outputs || []);
         if (!Array.isArray(incoming) || incoming.length === 0) {
           alert("That file doesn't look like a valid team-outputs JSON.");
           return;
         }
-        // Sanity check: each item should have id + project + output
         const bad = incoming.find(x => !x.id || !x.project || !x.output);
         if (bad) {
           alert("The file is missing required fields on at least one item. Import cancelled.");
@@ -888,10 +906,20 @@ function TeamOutputsApp() {
         }
         const savedAt = parsed._meta && parsed._meta.savedAt;
         const label = savedAt ? new Date(savedAt).toLocaleString() : "unknown date";
-        if (!confirm(`Load ${incoming.length} outputs from file (saved ${label})?\n\nThis replaces your current data. Your previous state remains in browser storage until you edit something.`)) {
+        if (!confirm(`Load ${incoming.length} outputs from file (saved ${label})?\n\nThis will replace and sync data to your Supabase database.`)) {
           return;
         }
-        setData(migrateData(incoming));
+        
+        const migrated = migrateData(incoming);
+        setData(migrated);
+        
+        // Upsert imported data to Supabase
+        const { error } = await supabaseClient.from('outputs').upsert(migrated);
+        if (error) {
+          console.error("Error bulk upserting to Supabase:", error);
+          alert("Failed to sync imported data to Supabase.");
+        }
+
         const iso = new Date().toISOString();
         setLastLoaded(iso);
         try { localStorage.setItem("team_outputs_last_loaded", iso); } catch {}
