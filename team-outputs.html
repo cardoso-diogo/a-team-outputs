@@ -1,0 +1,2434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Outputs — INEGI Composites Team</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; background: #16181b; }
+  body { font-family: 'Barlow', system-ui, sans-serif; }
+  #root { min-height: 100vh; }
+</style>
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useMemo } = React;
+
+
+// Inline SVG icons (Lucide-style)
+const makeIcon = (paths) => ({ size = 16, strokeWidth = 2, className = "", ...rest }) => (
+  React.createElement('svg', {
+    xmlns: 'http://www.w3.org/2000/svg',
+    width: size, height: size, viewBox: '0 0 24 24',
+    fill: 'none', stroke: 'currentColor',
+    strokeWidth, strokeLinecap: 'round', strokeLinejoin: 'round',
+    className, ...rest
+  }, ...paths.map((p, i) => React.createElement(p.tag, { key: i, ...p.attrs })))
+);
+const AlertTriangle = makeIcon([
+  { tag: 'path', attrs: { d: 'm21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z' } },
+  { tag: 'path', attrs: { d: 'M12 9v4' } },
+  { tag: 'path', attrs: { d: 'M12 17h.01' } },
+]);
+const CheckCircle2 = makeIcon([
+  { tag: 'circle', attrs: { cx: 12, cy: 12, r: 10 } },
+  { tag: 'path', attrs: { d: 'm9 12 2 2 4-4' } },
+]);
+const Clock = makeIcon([
+  { tag: 'circle', attrs: { cx: 12, cy: 12, r: 10 } },
+  { tag: 'polyline', attrs: { points: '12 6 12 12 16 14' } },
+]);
+const Play = makeIcon([
+  { tag: 'polygon', attrs: { points: '6 3 20 12 6 21 6 3' } },
+]);
+const Search = makeIcon([
+  { tag: 'circle', attrs: { cx: 11, cy: 11, r: 8 } },
+  { tag: 'path', attrs: { d: 'm21 21-4.3-4.3' } },
+]);
+const Filter = makeIcon([
+  { tag: 'polygon', attrs: { points: '22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3' } },
+]);
+const Download = makeIcon([
+  { tag: 'path', attrs: { d: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4' } },
+  { tag: 'polyline', attrs: { points: '7 10 12 15 17 10' } },
+  { tag: 'line', attrs: { x1: 12, y1: 15, x2: 12, y2: 3 } },
+]);
+const Upload = makeIcon([
+  { tag: 'path', attrs: { d: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4' } },
+  { tag: 'polyline', attrs: { points: '17 8 12 3 7 8' } },
+  { tag: 'line', attrs: { x1: 12, y1: 3, x2: 12, y2: 15 } },
+]);
+const RotateCcw = makeIcon([
+  { tag: 'path', attrs: { d: 'M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8' } },
+  { tag: 'path', attrs: { d: 'M3 3v5h5' } },
+]);
+const TrendingUp = makeIcon([
+  { tag: 'polyline', attrs: { points: '22 7 13.5 15.5 8.5 10.5 2 17' } },
+  { tag: 'polyline', attrs: { points: '16 7 22 7 22 13' } },
+]);
+const Users = makeIcon([
+  { tag: 'path', attrs: { d: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2' } },
+  { tag: 'circle', attrs: { cx: 9, cy: 7, r: 4 } },
+  { tag: 'path', attrs: { d: 'M22 21v-2a4 4 0 0 0-3-3.87' } },
+  { tag: 'path', attrs: { d: 'M16 3.13a4 4 0 0 1 0 7.75' } },
+]);
+const FolderKanban = makeIcon([
+  { tag: 'path', attrs: { d: 'M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z' } },
+  { tag: 'path', attrs: { d: 'M8 10v4' } },
+  { tag: 'path', attrs: { d: 'M12 10v2' } },
+  { tag: 'path', attrs: { d: 'M16 10v6' } },
+]);
+const X = makeIcon([
+  { tag: 'path', attrs: { d: 'M18 6 6 18' } },
+  { tag: 'path', attrs: { d: 'm6 6 12 12' } },
+]);
+const ChevronRight = makeIcon([
+  { tag: 'polyline', attrs: { points: '9 18 15 12 9 6' } },
+]);
+const Sun = makeIcon([
+  { tag: 'circle', attrs: { cx: 12, cy: 12, r: 4 } },
+  { tag: 'path', attrs: { d: 'M12 2v2' } },
+  { tag: 'path', attrs: { d: 'M12 20v2' } },
+  { tag: 'path', attrs: { d: 'm4.93 4.93 1.41 1.41' } },
+  { tag: 'path', attrs: { d: 'm17.66 17.66 1.41 1.41' } },
+  { tag: 'path', attrs: { d: 'M2 12h2' } },
+  { tag: 'path', attrs: { d: 'M20 12h2' } },
+  { tag: 'path', attrs: { d: 'm6.34 17.66-1.41 1.41' } },
+  { tag: 'path', attrs: { d: 'm19.07 4.93-1.41 1.41' } },
+]);
+const Moon = makeIcon([
+  { tag: 'path', attrs: { d: 'M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z' } },
+]);
+const Plus = makeIcon([
+  { tag: 'path', attrs: { d: 'M5 12h14' } },
+  { tag: 'path', attrs: { d: 'M12 5v14' } },
+]);
+const Trash2 = makeIcon([
+  { tag: 'path', attrs: { d: 'M3 6h18' } },
+  { tag: 'path', attrs: { d: 'M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6' } },
+  { tag: 'path', attrs: { d: 'M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2' } },
+  { tag: 'line', attrs: { x1: 10, y1: 11, x2: 10, y2: 17 } },
+  { tag: 'line', attrs: { x1: 14, y1: 11, x2: 14, y2: 17 } },
+]);
+
+
+const SEED_DATA = [{"id":"out_0","project":"NSP-Fundamental Research","owner":"AC","output":"Technology forecasting methodology definition","notes":"","years":{"2025":{"original":"Q1","current":"Q3","missed":1}},"status":"done","lt":"AC","slippages":1},{"id":"out_1","project":"NSP-Fundamental Research","owner":"AC","output":"Software tool for technology forecasting based on patent information","notes":"","years":{"2024":{"original":"Q4","current":"Q4","missed":1},"2025":{"original":"Q1","current":"Q1","missed":0}},"status":"done","lt":"DG","slippages":1},{"id":"out_2","project":"NSP-Fundamental Research","owner":"AC","output":"ISM Process Concept","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":0}},"status":"done","lt":"JM","slippages":0},{"id":"out_3","project":"NSP-Fundamental Research","owner":"AC","output":"ISM technologies mapping","notes":"","years":{"2025":{"original":"Q2","current":"Q3","missed":1}},"status":"done","lt":"JS","slippages":1},{"id":"out_4","project":"Labcomp - infraestrutura","owner":"AC","output":"Sistema de guiamento de fibra para cabeça de Enrolamento Filamentar","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":0},{"id":"out_5","project":"EDF-Major","owner":"AC","output":"Ballistic armour requirements document","notes":"","years":{"2026":{"original":"Q2","current":"Q2","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_6","project":"EDF-Major","owner":"AC","output":"Ballistic armour materials and technology selection document","notes":"","years":{"2026":{"original":"Q4","current":"Q4","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_7","project":"EDF-Major","owner":"AC","output":"Ballistic armour joinning samples","notes":"","years":{"2027":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_8","project":"EDF-Major","owner":"AC","output":"ballistic armour configurantion / detailed design","notes":"","years":{"2027":{"original":"Q3","current":"Q3","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_9","project":"EDF-Major","owner":"AC","output":"Ballist armour lab-scale production line","notes":"","years":{},"status":"waiting","lt":"","slippages":0},{"id":"out_10","project":"EDF-Major","owner":"AC","output":"Sustainable add-on ballistic armour prototype","notes":"","years":{"2028":{"original":"Q4","current":"Q4","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_11","project":"NSP-P3","owner":"AC","output":"Thermoplastic Cube-Sat Manufacturing & Assembly Process Development (Stamping/Overmoulding/Welding)","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":1},{"id":"out_12","project":"TII","owner":"AC","output":"Type V Manufacturing Report","notes":"","years":{"2024":{"original":"Q4","current":"Q4","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_13","project":"TII","owner":"AC","output":"Type V Pressure Vessel","notes":"","years":{"2024":{"original":"Q4","current":"Q4","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_14","project":"SMARTCODE","owner":"AC","output":"Contribution for MVP arquitecture definition (processes and software) reports","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":0},{"id":"out_15","project":"SMARTCODE","owner":"AC","output":"Report of MVP development, implementation, and achieved results","notes":"","years":{"2027":{"original":"Q3","current":"Q3","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_16","project":"SMARTCODE","owner":"AC","output":"ML model for temperature adjustment of in-situ AFP processes","notes":"","years":{"2027":{"original":"Q2","current":"Q2","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_17","project":"CONCERTO","owner":"AC","output":"Buldge test specimens","notes":"","years":{"2025":{"original":"Q3","current":"Q3","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_18","project":"CONCERTO","owner":"AC","output":"Half-tank for cryogenic testing","notes":"","years":{"2025":{"original":"Q2","current":"Q4","missed":1}},"status":"done","lt":"","slippages":1},{"id":"out_19","project":"pAIramid","owner":"DG","output":"Continuous fiber Filament","notes":"T2.2  - D 2.2 Formulation and characterization of functionalized Thermoplastic","years":{"2025":{"original":"Q3","current":"Q3","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":1},{"id":"out_20","project":"pAIramid","owner":"DG","output":"FDM heating system","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":0},{"id":"out_21","project":"pAIramid","owner":"DG","output":"FDM Head installation and validation","notes":"T3.2 (requesito inicio T4.4)","years":{"2025":{"original":"Q4","current":"Q4","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":1},{"id":"out_22","project":"pAIramid","owner":"DG","output":"Continuous fiber Filament with modified matrix (multifunctional)","notes":"T2.2  - D 2.2 Formulation and characterization of functionalized Thermoplastic","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_23","project":"pAIramid","owner":"DG","output":"FDM process with continuous fibres filament (samples)","notes":"T3.1 - D3.2 FDM process setup and methodology development","years":{"2026":{"original":"Q2","current":"Q2","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_24","project":"pAIramid","owner":"DG","output":"FDM manufacturing of a demonstrator for Vertical Stabilizer Box Fairing - laminados","notes":"T7.1 - D7.1. Lessons learnt from Use Case 1 [output T7.1]","years":{"2028":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_25","project":"pAIramid","owner":"DG","output":"FDM manufacturing of a demonstrator thermal heater plate for a Wing leading edge","notes":"T7,3 - D7.3. Lessons learnt from Use Case 3 [output T7.3","years":{"2028":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_26","project":"pAIramid","owner":"DG","output":"Manufacturing of a Wing leading edge demonstrator","notes":"T7.3 - D7.3. Lessons learnt from Use Case 3 [output T7.3","years":{"2028":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_27","project":"Eurecomp","owner":"DG","output":"Processo de produção de fibre mats com fibras curtas recicladas (desalinhadas)","notes":"","years":{"2025":{"original":"Q2","current":"Q2","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_28","project":"Eurecomp","owner":"DG","output":"Processo de alinhamento de fibras curtas para produção de fibre mats","notes":"","years":{"2025":{"original":"Q3","current":"Q4","missed":1}},"status":"done","lt":"","slippages":1},{"id":"out_29","project":"Eurecomp","owner":"DG","output":"Fibre mats production and testing","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":1},{"id":"out_30","project":"NSP","owner":"DG","output":"Demonstrador - conductive Patch","notes":"","years":{"2025":{"original":"Q3","current":"Q3","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_31","project":"Potential","owner":"DG","output":"Conceito de Processo/componente para in-mold Assembly e automação","notes":"T2.1 - D2.1 Geração e seleção de conceitos","years":{"2025":{"original":"Q3","current":"Q3","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_32","project":"FLASHCOMP","owner":"JM","output":"Digital twin for vacuum infusion","notes":"","years":{"2025":{"original":"Q1","current":"Q1","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_33","project":"FLASHCOMP","owner":"JM","output":"Process design validation (PAM-RTM)","notes":"","years":{"2024":{"original":"Q4","current":"Q4","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_34","project":"FLASHCOMP","owner":"JM","output":"Fully operational Test bed","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":1},{"id":"out_35","project":"Maria-Bike","owner":"JM","output":"Manufacturing process design & report","notes":"","years":{"2025":{"original":"Q1","current":"Q2","missed":1}},"status":"done","lt":"","slippages":1},{"id":"out_36","project":"Maria-Bike","owner":"JM","output":"Mariabike  prototypes (composite shells)","notes":"","years":{"2025":{"original":"Q2","current":"Q2","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_37","project":"Maria-Bike","owner":"JM","output":"Maria bike prototype assembled (composite structure)","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":1},{"id":"out_38","project":"Maria-Bike","owner":"JM","output":"Industrialization line dossie","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_39","project":"pAIramid","owner":"JM","output":"FDM process model","notes":"T4.4 - D4.4. FDM process simulation report [Report including description of models and simulation results]","years":{"2026":{"original":"Q4","current":"Q4","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_40","project":"SmaRTM","owner":"JM","output":"Análise FMEA","notes":"","years":{"2025":{"original":"Q1","current":"Q1","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_41","project":"SmaRTM","owner":"JM","output":"Validação experimental molde RTM","notes":"","years":{"2025":{"original":"Q2","current":"Q4","missed":1}},"status":"done","lt":"","slippages":1},{"id":"out_42","project":"SmaRTM","owner":"JM","output":"Componente protótipo","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_43","project":"EcoSat","owner":"JM","output":"Sustainable satellite structurure manufacturing assessment report (contribution)","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_44","project":"HERA","owner":"JPS","output":"Relatório testes permeabilidade in-plane","notes":"","years":{"2025":{"original":"Q1","current":"Q1","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_45","project":"HERA","owner":"JPS","output":"Scientic Paper #1 | On the enhancement  and tailoring of process-related quality and variability characteristics of thin-ply ADFP dry preforms","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":1},{"id":"out_46","project":"HERA","owner":"RP","output":"Wise dry preforms -  LCM performance assessment document","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":1},"2026":{"original":"Q2","current":"Q2","missed":0}},"status":"waiting","lt":"","slippages":1},{"id":"out_47","project":"HERA","owner":"JPS","output":"Scientific Paper #2 | Performance and Cost-Efficiency comparative analysis of ADFP Thin-Ply Composites and AFP/ATL Prepreg Composites","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":0},{"id":"out_48","project":"HERA","owner":"JPS","output":"Cool Autoclave performance assessment","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_49","project":"HERA","owner":"RP","output":"Wise dry preforms -  Mechanical performance assessment document","notes":"","years":{"2026":{"original":"Q2","current":"Q2","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_50","project":"HERA","owner":"RP","output":"Sustainable manufacturing experimental campaign report","notes":"","years":{"2026":{"original":"Q3","current":"Q3","missed":0}},"status":"waiting","lt":"","slippages":0},{"id":"out_51","project":"Embalagem do Futuro","owner":"JS","output":"Relatório de Testes e ensaios Laboratoriais","notes":"E4.3 - Configurações otimizadas","years":{"2025":{"original":"Q1","current":"Q3","missed":1}},"status":"done","lt":"","slippages":1},{"id":"out_52","project":"Embalagem do Futuro","owner":"JS","output":"Análise ANOVA","notes":"E4.3 - Configurações otimizadas","years":{"2025":{"original":"Q2","current":"Q3","missed":1}},"status":"done","lt":"","slippages":1},{"id":"out_53","project":"Embalagem do Futuro","owner":"JS","output":"Relatório validação parametros otimizados | Balde","notes":"","years":{"2025":{"original":"Q3","current":"Q4","missed":2},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":2},{"id":"out_54","project":"Embalagem do Futuro","owner":"JS","output":"Relatório validação parametros otimizados | Marmita","notes":"E4.3 - Configurações otimizadas","years":{"2025":{"original":"Q4","current":"Q4","missed":1}},"status":"at_risk","lt":"","slippages":1},{"id":"out_55","project":"Material Circulante","owner":"JM","output":"Definição de estratégias de infusão para máscara frontal do comboio","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":1},{"id":"out_56","project":"Material Circulante","owner":"JM","output":"Ajuda no desenvolvimento, construção e montagem de painéis interiores de comboio","notes":"","years":{"2025":{"original":"Q2","current":"Q4","missed":1},"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"waiting","lt":"","slippages":1},{"id":"out_57","project":"R2U","owner":"MM","output":"Industrialização e otimização de parâmetros de termoformação para termoplásticos","notes":"","years":{"2025":{"original":"Q2","current":"Q2","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_58","project":"Material Circulante","owner":"JM","output":"Projeto de molde de medição de permeabilidade de reforços","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_59","project":"R2U","owner":"MM","output":"Relatório | Ajuda no desenvolvimento, construção e montagem de painéis de WC modular","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_60","project":"IOANT","owner":"MM","output":"Design and machining | reaction wheel components","notes":"","years":{"2025":{"original":"Q2","current":"Q4","missed":1}},"status":"done","lt":"","slippages":1},{"id":"out_61","project":"AEROGANP","owner":"MM","output":"Desenho e fabrico de componentes de suporte para gimble","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":0}},"status":"done","lt":"","slippages":0},{"id":"out_62","project":"ATE","owner":"MM","output":"Design contentor","notes":"","years":{"2026":{"original":"Q1","current":"Q1","missed":0}},"status":"in_progress","lt":"","slippages":0},{"id":"out_63","project":"Equipa Processos","owner":"JM","output":"Ferramenta de simulação LCM (OpenFoam)","notes":"","years":{"2025":{"original":"Q4","current":"Q4","missed":0}},"status":"done","lt":"","slippages":0}];
+
+function relativeTime(iso) {
+  if (!iso) return "";
+  const t = new Date(iso).getTime();
+  const diff = (Date.now() - t) / 1000;
+  if (diff < 60) return "just now";
+  if (diff < 3600) return Math.floor(diff / 60) + "m ago";
+  if (diff < 86400) return Math.floor(diff / 3600) + "h ago";
+  const days = Math.floor(diff / 86400);
+  if (days === 1) return "yesterday";
+  if (days < 7) return days + "d ago";
+  return new Date(iso).toLocaleDateString();
+}
+
+const STATUSES = [
+  { code: "done", label: "Done", icon: CheckCircle2, color: "var(--done)" },
+  { code: "in_progress", label: "In Progress", icon: Play, color: "var(--progress)" },
+  { code: "waiting", label: "Waiting", icon: Clock, color: "var(--waiting)" },
+  { code: "at_risk", label: "At Risk", icon: AlertTriangle, color: "var(--risk)" },
+];
+const STATUS_MAP = Object.fromEntries(STATUSES.map(s => [s.code, s]));
+const ALL_YEARS = ["2024", "2025", "2026", "2027", "2028", "2029", "2030"];
+const DEFAULT_YEAR_FROM = "2024";
+const DEFAULT_YEAR_TO = "2028";
+const QUARTERS = ["Q1", "Q2", "Q3", "Q4"];
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const QUARTER_MONTHS = {
+  Q1: ["Jan", "Feb", "Mar"],
+  Q2: ["Apr", "May", "Jun"],
+  Q3: ["Jul", "Aug", "Sep"],
+  Q4: ["Oct", "Nov", "Dec"],
+};
+// Team roster: full name → initials. Order matters for dropdown display.
+const TEAM_ROSTER = [
+  { initials: "JS",  name: "João Silva" },
+  { initials: "AC",  name: "Alexandre Chícharo" },
+  { initials: "MP",  name: "Mário Pinto" },
+  { initials: "TS",  name: "Teresa Santos" },
+  { initials: "GA",  name: "Gonçalo Amorim" },
+  { initials: "DG",  name: "Daniel Gomes" },
+  { initials: "PP",  name: "Pedro Pedrosa" },
+  { initials: "JM",  name: "João Machado" },
+  { initials: "AL",  name: "Afonso Leitão" },
+  { initials: "MM",  name: "Mário Moutinho" },
+  { initials: "RP",  name: "Rúben Pereira" },
+  { initials: "DC",  name: "Diogo Cardoso" },
+];
+const ROSTER_BY_INITIALS = Object.fromEntries(TEAM_ROSTER.map(p => [p.initials, p.name]));
+// Legacy owner code remaps (JPS used to mean João Silva; merge into JS).
+const OWNER_REMAP = { JPS: "JS" };
+function normalizeOwner(o) { return OWNER_REMAP[o] || o; }
+
+// Migration: normalize any legacy data when it enters state.
+// - Owner JPS → JS (and same for any other remaps)
+// - Ensure validated, validatedAt, participants fields exist (added in v2 of the schema)
+function migrateData(arr) {
+  if (!Array.isArray(arr)) return arr;
+  return arr.map(d => ({
+    ...d,
+    owner: normalizeOwner(d.owner),
+    lt: d.lt ? normalizeOwner(d.lt) : d.lt,
+    participants: Array.isArray(d.participants) ? d.participants.map(normalizeOwner) : [],
+    validated: !!d.validated,
+    validatedAt: d.validatedAt || null,
+  }));
+}
+const STORAGE_KEY = "team_outputs_v1";
+
+function yearsInRange(from, to) {
+  const fi = ALL_YEARS.indexOf(from);
+  const ti = ALL_YEARS.indexOf(to);
+  if (fi < 0 || ti < 0 || fi > ti) return ALL_YEARS;
+  return ALL_YEARS.slice(fi, ti + 1);
+}
+
+function loadFromStorage(setData, setLoading) {
+  (async () => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        setData(migrateData(JSON.parse(raw)));
+      } else {
+        setData(migrateData(SEED_DATA));
+      }
+    } catch {
+      setData(migrateData(SEED_DATA));
+    }
+    setLoading(false);
+  })();
+}
+
+function saveToStorage(data) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
+}
+
+function MultiSelect({ label, options, selected, onChange, allLabel = "Any" }) {
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (!open) return;
+    const close = (e) => {
+      if (!e.target.closest(".multi-select")) setOpen(false);
+    };
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, [open]);
+
+  const toggle = (val) => {
+    if (selected.includes(val)) onChange(selected.filter(s => s !== val));
+    else onChange([...selected, val]);
+  };
+
+  let display = allLabel;
+  if (selected.length === 1) {
+    const opt = options.find(o => o.value === selected[0]);
+    display = opt ? opt.label : selected[0];
+  } else if (selected.length > 1) {
+    display = `${selected.length} selected`;
+  }
+
+  return (
+    <div className={`multi-select ${open ? "ms-open" : ""}`}>
+      <button className="ms-trigger" onClick={() => setOpen(o => !o)} type="button">
+        <span className="ms-label">{label}</span>
+        <span className="ms-value">{display}</span>
+        <span className="ms-chev">▾</span>
+      </button>
+      {open && (
+        <div className="ms-popover">
+          {options.map(opt => {
+            const checked = selected.includes(opt.value);
+            return (
+              <label key={opt.value} className={`ms-opt ${checked ? "ms-opt-checked" : ""}`}>
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  onChange={() => toggle(opt.value)}
+                />
+                <span>{opt.label}</span>
+              </label>
+            );
+          })}
+          {selected.length > 0 && (
+            <button className="ms-clear" onClick={() => onChange([])} type="button">Clear all</button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function YearRangePicker({ value, onChange, compact }) {
+  const fi = ALL_YEARS.indexOf(value.from);
+  return (
+    <div className={`year-range-picker ${compact ? "yrp-compact" : ""}`}>
+      <span className="yrp-label">Years</span>
+      <select
+        value={value.from}
+        onChange={e => {
+          const newFrom = e.target.value;
+          const ni = ALL_YEARS.indexOf(newFrom);
+          const ti = ALL_YEARS.indexOf(value.to);
+          onChange({ from: newFrom, to: ni > ti ? newFrom : value.to });
+        }}
+      >
+        {ALL_YEARS.map(y => <option key={y} value={y}>{y}</option>)}
+      </select>
+      <span className="yrp-dash">–</span>
+      <select
+        value={value.to}
+        onChange={e => {
+          const newTo = e.target.value;
+          const ni = ALL_YEARS.indexOf(newTo);
+          onChange({ from: ni < fi ? newTo : value.from, to: newTo });
+        }}
+      >
+        {ALL_YEARS.map(y => <option key={y} value={y}>{y}</option>)}
+      </select>
+    </div>
+  );
+}
+
+function StatusPill({ code, onClick, compact }) {
+  const s = STATUS_MAP[code] || STATUS_MAP.waiting;
+  const Icon = s.icon;
+  return (
+    <button
+      onClick={onClick}
+      className="status-pill"
+      style={{ "--pill-color": s.color }}
+      title={s.label}
+    >
+      <Icon size={compact ? 11 : 13} strokeWidth={2.2} />
+      {!compact && <span>{s.label}</span>}
+    </button>
+  );
+}
+
+function QuarterCell({ yearData, year, onEdit, status }) {
+  if (!yearData || !yearData.current) {
+    return <div className="q-cell q-empty" onClick={() => onEdit(year, null)}>—</div>;
+  }
+  const { original, current, missed, originalMonth, currentMonth } = yearData;
+  const slipped = original !== current || (originalMonth && currentMonth && originalMonth !== currentMonth);
+  const fmtOrig = originalMonth ? `${original}·${originalMonth}` : original;
+  const fmtCurr = currentMonth ? `${current}·${currentMonth}` : current;
+  const toneClass = status === "done" ? "q-done" : (missed > 0 ? "q-slipped" : "q-normal");
+  return (
+    <div
+      className={`q-cell ${toneClass}`}
+      onClick={() => onEdit(year, yearData)}
+      title={slipped ? `Originally ${fmtOrig} ${year} → now ${fmtCurr} ${year}` : `${fmtCurr} ${year}`}
+    >
+      {slipped ? (
+        <>
+          <span className="q-strike">{fmtOrig}</span>
+          <span className="q-arrow">→</span>
+          <span className="q-new">{fmtCurr}</span>
+        </>
+      ) : (
+        <span>{fmtCurr}</span>
+      )}
+      {missed > 0 && <span className="q-missed">{"✕".repeat(Math.min(missed, 3))}</span>}
+    </div>
+  );
+}
+
+function Heatmap({ items, years }) {
+  // Build a grid: rows = owners, cols = year-quarter
+  // Each cell tracks: total, done, slipped (any missed > 0), inflight (in_progress/waiting), missed (total slip events)
+  const owners = [...new Set(items.map(i => i.owner))].sort();
+  const cols = [];
+  years.forEach(y => QUARTERS.forEach(q => cols.push({ year: y, q })));
+  const matrix = {};
+  owners.forEach(o => {
+    matrix[o] = {};
+    cols.forEach(c => { matrix[o][`${c.year}-${c.q}`] = { total: 0, done: 0, slipped: 0, inflight: 0, atRisk: 0, missed: 0 }; });
+  });
+  items.forEach(item => {
+    Object.entries(item.years).forEach(([y, yd]) => {
+      const key = `${y}-${yd.current}`;
+      const cell = matrix[item.owner] && matrix[item.owner][key];
+      if (!cell) return;
+      cell.total += 1;
+      cell.missed += yd.missed || 0;
+      if (item.status === "at_risk") cell.atRisk += 1;
+      else if (item.status === "done") cell.done += 1;
+      else cell.inflight += 1;
+      if ((yd.missed || 0) > 0) cell.slipped += 1; // historical slip count, kept for tooltip
+    });
+  });
+  const maxCount = Math.max(1, ...owners.flatMap(o => cols.map(c => matrix[o][`${c.year}-${c.q}`].total)));
+
+  return (
+    <div className="heatmap-wrap">
+      <div className="heatmap" style={{ gridTemplateColumns: `80px repeat(${cols.length}, 1fr)` }}>
+        <div className="hm-corner" />
+        {cols.map((c, i) => (
+          <div key={i} className={`hm-header ${c.q === "Q1" ? "hm-year-start" : ""}`}>
+            {c.q === "Q1" && <div className="hm-year-label">{c.year}</div>}
+            <div className="hm-q-label">{c.q}</div>
+          </div>
+        ))}
+        {owners.map(o => (
+          <div key={o} className="hm-row" style={{ display: "contents" }}>
+            <div className="hm-owner">{o}</div>
+            {cols.map((c, i) => {
+              const cell = matrix[o][`${c.year}-${c.q}`];
+              const intensity = cell.total / maxCount;
+              // Color is driven by current status, not slip history.
+              // Red (at-risk) > Green (all done) > Amber (in-flight default)
+              let tone = "empty";
+              if (cell.total > 0) {
+                if (cell.atRisk > 0) tone = "slip";
+                else if (cell.done === cell.total) tone = "done";
+                else tone = "inflight";
+              }
+              const titleParts = [`${o} · ${c.q} ${c.year}: ${cell.total} output${cell.total !== 1 ? "s" : ""}`];
+              if (cell.done) titleParts.push(`${cell.done} done`);
+              if (cell.inflight) titleParts.push(`${cell.inflight} in-flight`);
+              if (cell.atRisk) titleParts.push(`${cell.atRisk} at risk`);
+              if (cell.slipped) titleParts.push(`${cell.slipped} with slip history (${cell.missed} slip event${cell.missed !== 1 ? "s" : ""})`);
+              return (
+                <div
+                  key={i}
+                  className={`hm-cell hm-tone-${tone} ${c.q === "Q1" ? "hm-year-start" : ""}`}
+                  style={{ "--intensity": intensity }}
+                  title={titleParts.join(" · ")}
+                >
+                  {cell.total > 0 && <span className="hm-count">{cell.total}</span>}
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function EditModal({ item, onClose, onSave, onDelete, existingProjects = [] }) {
+  const [draft, setDraft] = useState(item);
+  const [errors, setErrors] = useState({});
+  useEffect(() => { setDraft(item); setErrors({}); }, [item]);
+  if (!item) return null;
+  const isNew = !!draft._isNew;
+
+  const updateYear = (year, field, val) => {
+    setDraft(d => {
+      const yrs = { ...d.years };
+      if (!yrs[year]) yrs[year] = { original: val, current: val, missed: 0 };
+      const updated = { ...yrs[year], [field]: val };
+      // If quarter changed, clear the corresponding month if it's no longer in that quarter
+      if (field === "original" && updated.originalMonth && !QUARTER_MONTHS[val].includes(updated.originalMonth)) {
+        updated.originalMonth = "";
+      }
+      if (field === "current" && updated.currentMonth && !QUARTER_MONTHS[val].includes(updated.currentMonth)) {
+        updated.currentMonth = "";
+      }
+      yrs[year] = updated;
+      return { ...d, years: yrs };
+    });
+  };
+  const setMonth = (year, field, val) => {
+    setDraft(d => {
+      const yrs = { ...d.years };
+      if (!yrs[year]) return d;
+      yrs[year] = { ...yrs[year], [field]: val };
+      return { ...d, years: yrs };
+    });
+  };
+  const setMissed = (year, val) => {
+    setDraft(d => {
+      const yrs = { ...d.years };
+      if (!yrs[year]) return d;
+      yrs[year] = { ...yrs[year], missed: parseInt(val) || 0 };
+      return { ...d, years: yrs };
+    });
+  };
+  const clearYear = (year) => {
+    setDraft(d => {
+      const yrs = { ...d.years };
+      delete yrs[year];
+      return { ...d, years: yrs };
+    });
+  };
+  const addYear = (year) => {
+    setDraft(d => {
+      if (d.years[year]) return d;
+      return { ...d, years: { ...d.years, [year]: { original: "Q1", current: "Q1", missed: 0 } } };
+    });
+  };
+  const recomputeSlippages = (d) => ({ ...d, slippages: Object.values(d.years).reduce((a, y) => a + (y.missed || 0), 0) });
+
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal" onClick={e => e.stopPropagation()}>
+        <div className="modal-head">
+          <div>
+            <div className="modal-eyebrow">{isNew ? "New output" : "Editing output"}</div>
+            <div className="modal-project">{draft.project || "Untitled project"}</div>
+            {!isNew && <div className="modal-owner">Owner · {draft.owner || "—"}</div>}
+          </div>
+          <button className="icon-btn" onClick={onClose}><X size={18} /></button>
+        </div>
+        <div className="modal-body">
+          <div className="field-row">
+            <label className="field" style={{ flex: 1 }}>
+              <span className="field-lbl">Project {errors.project && <span className="field-err">required</span>}</span>
+              <input
+                value={draft.project || ""}
+                onChange={e => setDraft(d => ({ ...d, project: e.target.value }))}
+                placeholder="e.g. HERA"
+                list="project-suggestions"
+                className={errors.project ? "input-err" : ""}
+              />
+              <datalist id="project-suggestions">
+                {existingProjects.map(p => <option key={p} value={p} />)}
+              </datalist>
+            </label>
+          </div>
+
+          <label className="field">
+            <span className="field-lbl">Output {errors.output && <span className="field-err">required</span>}</span>
+            <textarea
+              value={draft.output}
+              onChange={e => setDraft(d => ({ ...d, output: e.target.value }))}
+              rows={2}
+              placeholder="Describe the deliverable"
+              className={errors.output ? "input-err" : ""}
+            />
+          </label>
+
+          <div className="field-row">
+            <label className="field">
+              <span className="field-lbl">Status</span>
+              <div className="status-picker">
+                {STATUSES.map(s => {
+                  const Icon = s.icon;
+                  const active = draft.status === s.code;
+                  return (
+                    <button
+                      key={s.code}
+                      className={`sp-btn ${active ? "sp-active" : ""}`}
+                      style={{ "--pill-color": s.color }}
+                      onClick={() => setDraft(d => {
+                        const next = { ...d, status: s.code };
+                        // Auto-clear validation if status moves away from done
+                        if (s.code !== "done" && d.validated) {
+                          next.validated = false;
+                          next.validatedAt = null;
+                        }
+                        return next;
+                      })}
+                    >
+                      <Icon size={13} /> {s.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </label>
+            <label className="field" style={{ flex: "0 0 200px" }}>
+              <span className="field-lbl">Leader / Owner</span>
+              <select
+                value={draft.owner || ""}
+                onChange={e => {
+                  const v = e.target.value;
+                  setDraft(d => ({ ...d, owner: v, lt: v }));
+                }}
+              >
+                <option value="">— select —</option>
+                {TEAM_ROSTER.map(p => (
+                  <option key={p.initials} value={p.initials}>{p.initials} · {p.name}</option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          <div className="field">
+            <label className={`validation-row ${draft.status !== "done" ? "validation-disabled" : ""}`}>
+              <input
+                type="checkbox"
+                checked={!!draft.validated}
+                disabled={draft.status !== "done"}
+                onChange={e => {
+                  const checked = e.target.checked;
+                  setDraft(d => ({
+                    ...d,
+                    validated: checked,
+                    validatedAt: checked ? new Date().toISOString() : null,
+                  }));
+                }}
+              />
+              <span className="validation-label">
+                Output validated
+                {draft.status !== "done" && <span className="validation-hint"> · available once status is Done</span>}
+                {draft.validated && draft.validatedAt && (
+                  <span className="validation-stamp"> · {new Date(draft.validatedAt).toLocaleDateString()}</span>
+                )}
+              </span>
+            </label>
+          </div>
+
+          <label className="field">
+            <span className="field-lbl">Notes</span>
+            <textarea
+              value={draft.notes || ""}
+              onChange={e => setDraft(d => ({ ...d, notes: e.target.value }))}
+              rows={2}
+            />
+          </label>
+
+          <div className="field">
+            <span className="field-lbl">Participants</span>
+            <MultiSelect
+              label="Participants"
+              allLabel="None"
+              options={TEAM_ROSTER
+                .filter(p => p.initials !== draft.owner)
+                .map(p => ({ value: p.initials, label: `${p.initials} · ${p.name}` }))}
+              selected={Array.isArray(draft.participants) ? draft.participants : []}
+              onChange={vals => setDraft(d => ({ ...d, participants: vals }))}
+            />
+          </div>
+
+          <div className="field">
+            <span className="field-lbl">Planned Quarters</span>
+            <div className="years-editor">
+              {ALL_YEARS.map(y => {
+                const yd = draft.years[y];
+                return (
+                  <div key={y} className={`year-box ${yd ? "year-active" : ""}`}>
+                    <div className="year-head">
+                      <span className="year-label">{y}</span>
+                      {yd ? (
+                        <button className="mini-btn" onClick={() => clearYear(y)}><X size={11} /></button>
+                      ) : (
+                        <button className="mini-btn mini-add" onClick={() => addYear(y)}>+</button>
+                      )}
+                    </div>
+                    {yd && (
+                      <div className="year-fields">
+                        <div className="yf-row yf-row-quarter">
+                          <span className="yf-lbl">Plan</span>
+                          <select value={yd.original} onChange={e => updateYear(y, "original", e.target.value)}>
+                            {QUARTERS.map(q => <option key={q} value={q}>{q}</option>)}
+                          </select>
+                          <select
+                            className="yf-month"
+                            value={yd.originalMonth || ""}
+                            onChange={e => setMonth(y, "originalMonth", e.target.value)}
+                            title="Optional month"
+                          >
+                            <option value="">—</option>
+                            {QUARTER_MONTHS[yd.original].map(m => <option key={m} value={m}>{m}</option>)}
+                          </select>
+                        </div>
+                        <div className="yf-row yf-row-quarter">
+                          <span className="yf-lbl">Now</span>
+                          <select value={yd.current} onChange={e => updateYear(y, "current", e.target.value)}>
+                            {QUARTERS.map(q => <option key={q} value={q}>{q}</option>)}
+                          </select>
+                          <select
+                            className="yf-month"
+                            value={yd.currentMonth || ""}
+                            onChange={e => setMonth(y, "currentMonth", e.target.value)}
+                            title="Optional month"
+                          >
+                            <option value="">—</option>
+                            {QUARTER_MONTHS[yd.current].map(m => <option key={m} value={m}>{m}</option>)}
+                          </select>
+                        </div>
+                        <div className="yf-row">
+                          <span className="yf-lbl">Slips</span>
+                          <input type="number" min="0" max="5" value={yd.missed} onChange={e => setMissed(y, e.target.value)} />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+        <div className="modal-foot">
+          {!isNew && onDelete && (
+            <button className="btn-danger" onClick={() => onDelete(draft.id)}>Delete</button>
+          )}
+          <div style={{ flex: 1 }} />
+          <button className="btn-secondary" onClick={onClose}>Cancel</button>
+          <button className="btn-primary" onClick={() => {
+            const errs = {};
+            if (!draft.project || !draft.project.trim()) errs.project = true;
+            if (!draft.output || !draft.output.trim()) errs.output = true;
+            if (Object.keys(errs).length) { setErrors(errs); return; }
+            const cleaned = { ...draft };
+            delete cleaned._isNew;
+            onSave(recomputeSlippages(cleaned));
+          }}>{isNew ? "Add output" : "Save changes"}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TeamOutputsApp() {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [filters, setFilters] = useState({ owner: "all", project: "all", statuses: [], riskOnly: false });
+  const [sortBy, setSortBy] = useState("slippages");
+  const [editItem, setEditItem] = useState(null);
+  const [view, setView] = useState("dashboard");
+  const [yearRange, setYearRange] = useState(() => {
+    try {
+      const saved = localStorage.getItem("team_outputs_year_range");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && ALL_YEARS.includes(parsed.from) && ALL_YEARS.includes(parsed.to)) return parsed;
+      }
+    } catch {}
+    return { from: DEFAULT_YEAR_FROM, to: DEFAULT_YEAR_TO };
+  });
+  const displayedYears = useMemo(() => yearsInRange(yearRange.from, yearRange.to), [yearRange]);
+  useEffect(() => {
+    try { localStorage.setItem("team_outputs_year_range", JSON.stringify(yearRange)); } catch {}
+  }, [yearRange]);
+  const [theme, setTheme] = useState(() => {
+    try {
+      const saved = localStorage.getItem("team_outputs_theme");
+      return saved === "light" || saved === "dark" ? saved : "dark";
+    } catch { return "dark"; }
+  });
+
+  useEffect(() => {
+    try { localStorage.setItem("team_outputs_theme", theme); } catch {}
+  }, [theme]);
+
+  useEffect(() => {
+    loadFromStorage(setData, setLoading);
+  }, []);
+
+  useEffect(() => {
+    if (!loading && data.length > 0) saveToStorage(data);
+  }, [data, loading]);
+
+  const owners = useMemo(() => [...new Set(data.map(d => d.owner))].sort(), [data]);
+  const projects = useMemo(() => [...new Set(data.map(d => d.project))].sort(), [data]);
+
+  const filtered = useMemo(() => {
+    return data.filter(d => {
+      if (filters.owner !== "all" && d.owner !== filters.owner) return false;
+      if (filters.project !== "all" && d.project !== filters.project) return false;
+      if (filters.statuses.length > 0 && !filters.statuses.includes(d.status)) return false;
+      if (filters.riskOnly && d.status !== "at_risk" && d.slippages === 0) return false;
+      if (search && !(`${d.output} ${d.project} ${d.owner} ${d.notes}`.toLowerCase().includes(search.toLowerCase()))) return false;
+      return true;
+    });
+  }, [data, filters, search]);
+
+  const sorted = useMemo(() => {
+    const arr = [...filtered];
+    if (sortBy === "slippages") arr.sort((a, b) => b.slippages - a.slippages || a.project.localeCompare(b.project));
+    else if (sortBy === "project") arr.sort((a, b) => a.project.localeCompare(b.project) || b.slippages - a.slippages);
+    else if (sortBy === "owner") arr.sort((a, b) => a.owner.localeCompare(b.owner) || b.slippages - a.slippages);
+    else if (sortBy === "status") arr.sort((a, b) => a.status.localeCompare(b.status));
+    return arr;
+  }, [filtered, sortBy]);
+
+  const dashboardItems = useMemo(() => {
+    const inRange = new Set(displayedYears);
+    return data.filter(d => {
+      const yrs = Object.keys(d.years || {});
+      if (yrs.length === 0) return true; // outputs without year plans stay visible
+      return yrs.some(y => inRange.has(y));
+    });
+  }, [data, displayedYears]);
+
+  const stats = useMemo(() => {
+    const s = { total: dashboardItems.length, done: 0, progress: 0, waiting: 0, risk: 0, slipped: 0, totalSlips: 0 };
+    dashboardItems.forEach(d => {
+      if (d.status === "done") s.done++;
+      if (d.status === "in_progress") s.progress++;
+      if (d.status === "waiting") s.waiting++;
+      if (d.status === "at_risk") s.risk++;
+      if (d.slippages > 0) s.slipped++;
+      s.totalSlips += d.slippages;
+    });
+    return s;
+  }, [dashboardItems]);
+
+  const progressLeaderboard = useMemo(() => {
+    const byOwner = {};
+    dashboardItems.forEach(d => {
+      if (!byOwner[d.owner]) byOwner[d.owner] = { owner: d.owner, total: 0, done: 0, inflight: 0, waiting: 0, risk: 0 };
+      byOwner[d.owner].total++;
+      if (d.status === "done") byOwner[d.owner].done++;
+      else if (d.status === "in_progress") byOwner[d.owner].inflight++;
+      else if (d.status === "at_risk") { byOwner[d.owner].inflight++; byOwner[d.owner].risk++; }
+      else byOwner[d.owner].waiting++; // waiting + unknown
+    });
+    return Object.values(byOwner).sort((a, b) => {
+      const aRate = a.total > 0 ? a.done / a.total : 0;
+      const bRate = b.total > 0 ? b.done / b.total : 0;
+      if (bRate !== aRate) return bRate - aRate;
+      return b.done - a.done; // tiebreak by absolute count
+    });
+  }, [dashboardItems]);
+
+  const projectHealth = useMemo(() => {
+    const byProj = {};
+    dashboardItems.forEach(d => {
+      if (!byProj[d.project]) byProj[d.project] = { project: d.project, total: 0, done: 0, slips: 0, risk: 0 };
+      byProj[d.project].total++;
+      if (d.status === "done") byProj[d.project].done++;
+      byProj[d.project].slips += d.slippages;
+      if (d.status === "at_risk") byProj[d.project].risk++;
+    });
+    return Object.values(byProj).sort((a, b) => b.slips - a.slips || b.risk - a.risk);
+  }, [dashboardItems]);
+
+  const handleSave = (updated) => {
+    setData(d => {
+      const exists = d.some(x => x.id === updated.id);
+      return exists ? d.map(x => x.id === updated.id ? updated : x) : [...d, updated];
+    });
+    setEditItem(null);
+  };
+
+  const handleAddNew = () => {
+    const newItem = {
+      id: "new_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
+      project: "",
+      owner: "",
+      output: "",
+      notes: "",
+      years: {},
+      status: "waiting",
+      lt: "",
+      slippages: 0,
+      _isNew: true,
+    };
+    setEditItem(newItem);
+  };
+
+  const handleDelete = (id) => {
+    if (!confirm("Delete this output? This cannot be undone (unless you have a saved file backup).")) return;
+    setData(d => d.filter(x => x.id !== id));
+    setEditItem(null);
+  };
+
+  const handleReset = () => {
+    if (confirm("Clear ALL outputs? This empties the tracker completely.\n\nMake sure you've saved a backup file first if you want to keep this data.")) {
+      setData([]);
+    }
+  };
+
+  const [lastSaved, setLastSaved] = useState(() => {
+    try { return localStorage.getItem("team_outputs_last_saved") || null; } catch { return null; }
+  });
+  const [lastLoaded, setLastLoaded] = useState(() => {
+    try { return localStorage.getItem("team_outputs_last_loaded") || null; } catch { return null; }
+  });
+
+  const handleExport = () => {
+    const now = new Date();
+    const payload = {
+      _meta: {
+        savedAt: now.toISOString(),
+        version: 1,
+        count: data.length,
+      },
+      outputs: data,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const stamp = now.toISOString().slice(0, 16).replace("T", "_").replace(":", "h");
+    a.href = url;
+    a.download = `team-outputs_${stamp}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    const iso = now.toISOString();
+    setLastSaved(iso);
+    try { localStorage.setItem("team_outputs_last_saved", iso); } catch {}
+  };
+
+  const handleImport = (e) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = ""; // reset so same file can be re-selected
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(reader.result);
+        // Accept either the wrapped {_meta, outputs} shape, or a bare array
+        const incoming = Array.isArray(parsed) ? parsed : (parsed.outputs || []);
+        if (!Array.isArray(incoming) || incoming.length === 0) {
+          alert("That file doesn't look like a valid team-outputs JSON.");
+          return;
+        }
+        // Sanity check: each item should have id + project + output
+        const bad = incoming.find(x => !x.id || !x.project || !x.output);
+        if (bad) {
+          alert("The file is missing required fields on at least one item. Import cancelled.");
+          return;
+        }
+        const savedAt = parsed._meta && parsed._meta.savedAt;
+        const label = savedAt ? new Date(savedAt).toLocaleString() : "unknown date";
+        if (!confirm(`Load ${incoming.length} outputs from file (saved ${label})?\n\nThis replaces your current data. Your previous state remains in browser storage until you edit something.`)) {
+          return;
+        }
+        setData(migrateData(incoming));
+        const iso = new Date().toISOString();
+        setLastLoaded(iso);
+        try { localStorage.setItem("team_outputs_last_loaded", iso); } catch {}
+      } catch (err) {
+        alert("Could not parse that file as JSON:\n\n" + (err.message || err));
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  if (loading) return <div className="app-loading">Loading…</div>;
+
+  return (
+    <div className="app" data-theme={theme}>
+      <style>{CSS}</style>
+
+      <header className="hdr">
+        <div className="hdr-title">
+          <div className="hdr-eyebrow">INEGI</div>
+          <h1>Project Outputs</h1>
+          <div className="hdr-sub">Composites Unit · output tracker</div>
+        </div>
+        <div className="hdr-actions">
+          {(lastSaved || lastLoaded) && (
+            <div className="file-stamp" title={lastSaved ? `Last saved to file: ${new Date(lastSaved).toLocaleString()}` : `Last loaded from file: ${new Date(lastLoaded).toLocaleString()}`}>
+              {lastSaved && (!lastLoaded || new Date(lastSaved) > new Date(lastLoaded))
+                ? <>saved · <b>{relativeTime(lastSaved)}</b></>
+                : <>loaded · <b>{relativeTime(lastLoaded)}</b></>}
+            </div>
+          )}
+          <button className="btn-new" onClick={handleAddNew} title="Add a new output">
+            <Plus size={14} /> New output
+          </button>
+          <button className="icon-btn" onClick={() => setTheme(t => t === "dark" ? "light" : "dark")} title={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}>
+            {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
+          <label className="icon-btn" title="Load data from file">
+            <Upload size={16} />
+            <input type="file" accept="application/json,.json" onChange={handleImport} style={{ display: "none" }} />
+          </label>
+          <button className="icon-btn" onClick={handleExport} title="Save data to file"><Download size={16} /></button>
+          <button className="icon-btn icon-btn-danger" onClick={handleReset} title="Clear all outputs"><Trash2 size={16} /></button>
+        </div>
+      </header>
+
+      <nav className="tabs">
+        {[
+          { id: "dashboard", label: "Dashboard" },
+          { id: "heatmap", label: "Heatmap" },
+          { id: "risk", label: "Risk & Slippage" },
+          { id: "table", label: "All Outputs" },
+        ].map(t => (
+          <button
+            key={t.id}
+            className={`tab ${view === t.id ? "tab-active" : ""}`}
+            onClick={() => setView(t.id)}
+          >{t.label}</button>
+        ))}
+      </nav>
+
+      {view === "dashboard" && (
+        <div className="v-dash">
+          <div className="dash-toolbar">
+            <div className="dash-toolbar-info">
+              {dashboardItems.length < data.length && (
+                <span>Showing <b>{dashboardItems.length}</b> of {data.length} outputs with plans in this range</span>
+              )}
+            </div>
+            <YearRangePicker value={yearRange} onChange={setYearRange} />
+          </div>
+          <div className="stats-row">
+            <div className="stat">
+              <div className="stat-label">Total outputs</div>
+              <div className="stat-value">{stats.total}</div>
+              <div className="stat-meta">{projects.length} projects · {owners.length} people</div>
+            </div>
+            <div className="stat stat-done">
+              <div className="stat-label">Done</div>
+              <div className="stat-value">{stats.done}</div>
+              <div className="stat-meta">{stats.total > 0 ? Math.round(100 * stats.done / stats.total) : 0}% complete</div>
+            </div>
+            <div className="stat stat-progress">
+              <div className="stat-label">In progress</div>
+              <div className="stat-value">{stats.progress}</div>
+              <div className="stat-meta">{stats.waiting} waiting</div>
+            </div>
+            <div className="stat stat-risk">
+              <div className="stat-label">Slipped</div>
+              <div className="stat-value">{stats.slipped}</div>
+              <div className="stat-meta">{stats.totalSlips} slip events · {stats.risk} at risk</div>
+            </div>
+          </div>
+
+          <div className="dash-grid">
+            <section className="panel">
+              <header className="panel-hdr">
+                <TrendingUp size={16} /><span>Outputs · planned vs completed</span>
+              </header>
+              <div className="leaderboard">
+                {progressLeaderboard.map(row => {
+                  const donePct = row.total > 0 ? (row.done / row.total) * 100 : 0;
+                  const inflightPct = row.total > 0 ? (row.inflight / row.total) * 100 : 0;
+                  const waitingPct = row.total > 0 ? (row.waiting / row.total) * 100 : 0;
+                  const ratePct = Math.round(donePct);
+                  return (
+                    <div key={row.owner} className="lb-row" onClick={() => { setView("table"); setFilters(f => ({ ...f, owner: row.owner })); }}>
+                      <div className="lb-owner">{row.owner}</div>
+                      <div className="lb-progress">
+                        <div className="lb-segbar" title={`${row.done} done · ${row.inflight} in-flight · ${row.waiting} waiting`}>
+                          {donePct > 0 && <div className="lb-seg lb-seg-done" style={{ width: `${donePct}%` }} />}
+                          {inflightPct > 0 && <div className="lb-seg lb-seg-inflight" style={{ width: `${inflightPct}%` }} />}
+                          {waitingPct > 0 && <div className="lb-seg lb-seg-waiting" style={{ width: `${waitingPct}%` }} />}
+                        </div>
+                        <div className="lb-detail">
+                          <span className="lb-pct">{ratePct}%</span>
+                          <span className="lb-counts">{row.done} of {row.total}</span>
+                          {row.risk > 0 && <span className="lb-risk">⚠ {row.risk}</span>}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+
+            <section className="panel">
+              <header className="panel-hdr">
+                <FolderKanban size={16} /><span>Project health</span>
+              </header>
+              <div className="proj-list">
+                {projectHealth.slice(0, 10).map(p => {
+                  const doneRate = p.total > 0 ? p.done / p.total : 0;
+                  return (
+                    <div key={p.project} className="proj-row" onClick={() => { setView("table"); setFilters(f => ({ ...f, project: p.project })); }}>
+                      <div className="proj-name">{p.project}</div>
+                      <div className="proj-meta">
+                        <span className="proj-count">{p.done}/{p.total}</span>
+                        <div className="proj-track"><div className="proj-fill" style={{ width: `${doneRate * 100}%` }} /></div>
+                        {p.slips > 0 && <span className="proj-slips">◷{p.slips}</span>}
+                        {p.risk > 0 && <span className="proj-risk">⚠{p.risk}</span>}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+
+            <section className="panel panel-full">
+              <header className="panel-hdr">
+                <AlertTriangle size={16} /><span>Needs attention</span>
+              </header>
+              <div className="attn-list">
+                {dashboardItems
+                  .filter(d => d.status === "at_risk" || d.slippages >= 2)
+                  .sort((a, b) => b.slippages - a.slippages)
+                  .slice(0, 8)
+                  .map(d => (
+                    <div key={d.id} className="attn-row" onClick={() => setEditItem(d)}>
+                      <StatusPill code={d.status} compact />
+                      <div className="attn-info">
+                        <div className="attn-output">{d.output}</div>
+                        <div className="attn-meta">{d.project} · {d.owner}{d.slippages > 0 ? ` · ${d.slippages} slip${d.slippages !== 1 ? "s" : ""}` : ""}</div>
+                      </div>
+                      <ChevronRight size={14} className="attn-arrow" />
+                    </div>
+                  ))}
+                {dashboardItems.filter(d => d.status === "at_risk" || d.slippages >= 2).length === 0 && (
+                  <div className="empty-note">No items need attention.</div>
+                )}
+              </div>
+            </section>
+          </div>
+        </div>
+      )}
+
+      {view === "heatmap" && (
+        <div className="v-heat">
+          <div className="heatmap-toolbar">
+            <div className="panel-hdr" style={{ padding: 0, border: "none", margin: 0 }}>
+              <Users size={16} /><span>Outputs by owner & quarter · green = all done, amber = in-flight, red = at risk</span>
+            </div>
+            <YearRangePicker value={yearRange} onChange={setYearRange} />
+          </div>
+          <Heatmap items={data} years={displayedYears} />
+          <div className="hm-legend">
+            <div className="hm-leg-row">
+              <span className="hm-leg-box" style={{ background: "color-mix(in srgb, var(--done) 70%, var(--cell-bg))" }} />
+              <span>all done</span>
+              <span style={{ marginLeft: 16 }} />
+              <span className="hm-leg-box" style={{ background: "color-mix(in srgb, var(--accent) 65%, var(--cell-bg))" }} />
+              <span>in-flight</span>
+              <span style={{ marginLeft: 16 }} />
+              <span className="hm-leg-box" style={{ background: "color-mix(in srgb, var(--risk) 70%, var(--cell-bg))" }} />
+              <span>at risk</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {view === "risk" && (
+        <div className="v-risk">
+          <div className="risk-summary">
+            <div className="risk-big">
+              <div className="risk-big-num">{stats.totalSlips}</div>
+              <div className="risk-big-lbl">total slip events across {stats.slipped} outputs</div>
+            </div>
+            <div className="risk-big">
+              <div className="risk-big-num" style={{ color: "var(--risk)" }}>{stats.risk}</div>
+              <div className="risk-big-lbl">outputs flagged at risk</div>
+            </div>
+          </div>
+          <div className="risk-list">
+            {data
+              .filter(d => d.slippages > 0 || d.status === "at_risk")
+              .sort((a, b) => b.slippages - a.slippages)
+              .map(d => (
+                <div key={d.id} className="risk-card" onClick={() => setEditItem(d)}>
+                  <div className="risk-card-head">
+                    <StatusPill code={d.status} compact />
+                    <span className="risk-owner">{d.owner}</span>
+                    <span className="risk-proj">{d.project}</span>
+                    <span className="risk-slips">
+                      {Array.from({ length: d.slippages }).map((_, i) => (
+                        <span key={i} className="risk-slip-dot" />
+                      ))}
+                      {d.slippages} slip{d.slippages !== 1 ? "s" : ""}
+                    </span>
+                  </div>
+                  <div className="risk-output">{d.output}</div>
+                  <div className="risk-timeline">
+                    {Object.entries(d.years).map(([y, yd]) => {
+                      const slipped = yd.original !== yd.current || (yd.originalMonth && yd.currentMonth && yd.originalMonth !== yd.currentMonth);
+                      const fmtO = yd.originalMonth ? `${yd.original}·${yd.originalMonth}` : yd.original;
+                      const fmtC = yd.currentMonth ? `${yd.current}·${yd.currentMonth}` : yd.current;
+                      const toneCls = d.status === "done" ? "risk-pin-done" : (slipped ? "risk-pin-slip" : "");
+                      return (
+                        <div key={y} className={`risk-pin ${toneCls}`}>
+                          <span className="rp-year">{y}</span>
+                          {slipped ? <span><s>{fmtO}</s> → <b>{fmtC}</b></span> : <span>{fmtC}</span>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {d.notes && <div className="risk-notes">{d.notes}</div>}
+                </div>
+              ))}
+            {data.filter(d => d.slippages > 0 || d.status === "at_risk").length === 0 && (
+              <div className="empty-note">No slippage or at-risk items. Nice work.</div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {view === "table" && (
+        <div className="v-table">
+          <div className="toolbar">
+            <div className="search-wrap">
+              <Search size={14} />
+              <input
+                placeholder="Search output, project, notes…"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
+            </div>
+            <select value={filters.owner} onChange={e => setFilters(f => ({ ...f, owner: e.target.value }))}>
+              <option value="all">All owners</option>
+              {owners.map(o => <option key={o} value={o}>{o}</option>)}
+            </select>
+            <select value={filters.project} onChange={e => setFilters(f => ({ ...f, project: e.target.value }))}>
+              <option value="all">All projects</option>
+              {projects.map(p => <option key={p} value={p}>{p}</option>)}
+            </select>
+            <MultiSelect
+              label="Status"
+              allLabel="Any"
+              options={STATUSES.map(s => ({ value: s.code, label: s.label }))}
+              selected={filters.statuses}
+              onChange={vals => setFilters(f => ({ ...f, statuses: vals }))}
+            />
+            <label className="check-tog">
+              <input type="checkbox" checked={filters.riskOnly} onChange={e => setFilters(f => ({ ...f, riskOnly: e.target.checked }))} />
+              Risk/slipped only
+            </label>
+            <select value={sortBy} onChange={e => setSortBy(e.target.value)}>
+              <option value="slippages">Sort: slippages</option>
+              <option value="project">Sort: project</option>
+              <option value="owner">Sort: owner</option>
+              <option value="status">Sort: status</option>
+            </select>
+            <YearRangePicker value={yearRange} onChange={setYearRange} compact />
+            <div className="tb-count">{sorted.length} / {data.length}</div>
+          </div>
+          <div className="tbl-wrap">
+            <table className="tbl">
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Project</th>
+                  <th>Owner</th>
+                  <th>Output</th>
+                  {displayedYears.map(y => <th key={y} className="th-q">{y}</th>)}
+                  <th className="th-slip">Slips</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sorted.map(d => (
+                  <tr key={d.id} onClick={() => setEditItem(d)}>
+                    <td>
+                      <div className="status-stack">
+                        <StatusPill code={d.status} compact />
+                        {d.validated && <span className="validated-tick" title={`Validated ${d.validatedAt ? new Date(d.validatedAt).toLocaleDateString() : ""}`}>✓</span>}
+                      </div>
+                    </td>
+                    <td className="td-proj">{d.project}</td>
+                    <td className="td-owner">
+                      <span>{d.owner}</span>
+                      {d.participants && d.participants.length > 0 && (
+                        <span className="participant-count" title={d.participants.join(", ")}>+{d.participants.length}</span>
+                      )}
+                    </td>
+                    <td className="td-out">
+                      <div className="td-out-main">{d.output}</div>
+                      {d.notes && <div className="td-out-notes">{d.notes}</div>}
+                    </td>
+                    {displayedYears.map(y => (
+                      <td key={y} className="td-q">
+                        <QuarterCell yearData={d.years[y]} year={y} onEdit={() => setEditItem(d)} status={d.status} />
+                      </td>
+                    ))}
+                    <td className="td-slip">
+                      {d.slippages > 0 ? (
+                        <span className="slip-badge">
+                          {Array.from({ length: Math.min(d.slippages, 3) }).map((_, i) => <span key={i} className="slip-dot" />)}
+                          {d.slippages}
+                        </span>
+                      ) : <span className="slip-none">—</span>}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {editItem && <EditModal item={editItem} onClose={() => setEditItem(null)} onSave={handleSave} onDelete={handleDelete} existingProjects={projects} />}
+    </div>
+  );
+}
+
+const CSS = `
+  :root {
+    /* INEGI brand palette — dark theme */
+    --bg: #16181b;
+    --bg-2: #1d2024;
+    --bg-3: #262a2f;
+    --line: #353a40;
+    --line-2: #474d54;
+    --ink: #ebeef1;
+    --ink-dim: #9aa2ab;
+    --ink-dimmer: #6e767f;
+    --accent: #b82d44;        /* INEGI red, slightly lifted for dark bg */
+    --accent-2: #981E32;      /* Pantone 201C */
+    --done: #719580;          /* secondary sage */
+    --progress: #679AA5;      /* secondary teal */
+    --waiting: #A49581;       /* secondary warm beige */
+    --risk: #C26E3E;          /* secondary terracotta */
+    --navy: #4d6f8c;          /* secondary deep navy, lifted for dark bg */
+    --risk-glow: #d68654;
+    --cell-bg: #1d2024;
+    --shadow: 0 2px 12px rgba(0,0,0,0.35);
+    --radius: 4px;
+  }
+  .app[data-theme="light"] {
+    /* INEGI brand palette — light theme */
+    --bg: #ffffff;
+    --bg-2: #f7f8f9;
+    --bg-3: #eef0f2;
+    --line: #dde1e5;
+    --line-2: #c4cad0;
+    --ink: #1d2024;
+    --ink-dim: #6b727a;
+    --ink-dimmer: #9aa1a8;
+    --accent: #981E32;        /* Pantone 201C */
+    --accent-2: #8B2638;      /* darker brick from secondary */
+    --done: #5a7d68;
+    --progress: #4d818c;
+    --waiting: #8a7d6a;
+    --risk: #b25a2c;
+    --navy: #29445C;          /* secondary deep navy, brand spec */
+    --risk-glow: #c46f3e;
+    --cell-bg: #eef0f2;
+    --shadow: 0 2px 12px rgba(20,30,40,0.06);
+  }
+  .app[data-theme="light"] .btn-primary { color: #ffffff; }
+  .app[data-theme="light"] .modal-backdrop { background: rgba(20, 30, 40, 0.4); }
+  * { box-sizing: border-box; }
+  .app {
+    font-family: 'Barlow', 'Barlow', 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 28px 32px 60px;
+    max-width: 1500px;
+    margin: 0 auto;
+  }
+  .app-loading {
+    font-family: 'Barlow', 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink-dim);
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+  }
+  .hdr {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 4px 0 22px 16px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 0;
+    position: relative;
+  }
+  .hdr::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 6px;
+    bottom: 28px;
+    width: 4px;
+    background: var(--accent);
+  }
+  .hdr-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.32em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .hdr h1 {
+    font-family: 'Barlow Condensed', 'DIN Condensed', 'Helvetica Neue', sans-serif;
+    font-weight: 600;
+    font-size: 38px;
+    letter-spacing: 0;
+    margin: 0;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .hdr-sub {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink-dimmer);
+    margin-top: 6px;
+    letter-spacing: 0.04em;
+  }
+  .hdr-actions { display: flex; gap: 6px; }
+  .icon-btn {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--ink-dim);
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .icon-btn:hover { color: var(--ink); border-color: var(--line-2); background: var(--bg-2); }
+  .icon-btn-danger:hover { color: var(--risk); border-color: color-mix(in srgb, var(--risk) 50%, transparent); background: color-mix(in srgb, var(--risk) 8%, transparent); }
+
+  .icon-btn input[type="file"] { position: absolute; width: 0; height: 0; }
+
+  .file-stamp {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-dimmer);
+    padding: 0 12px 0 6px;
+    font-variant-numeric: tabular-nums;
+  }
+  .file-stamp b {
+    color: var(--ink-dim);
+    margin-left: 4px;
+    font-weight: 500;
+  }
+
+  .heatmap-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .dash-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  .dash-toolbar-info {
+    font-size: 12px;
+    color: var(--ink-dim);
+    font-style: italic;
+  }
+  .dash-toolbar-info b {
+    color: var(--accent);
+    font-weight: 600;
+    font-style: normal;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .year-range-picker {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 4px 10px 4px 12px;
+  }
+  .year-range-picker .yrp-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: var(--ink-dimmer);
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+  .year-range-picker select {
+    background: transparent;
+    border: none;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 4px 4px;
+    cursor: pointer;
+    outline: none;
+    font-variant-numeric: tabular-nums;
+  }
+  .year-range-picker select:hover { color: var(--accent); }
+  .year-range-picker .yrp-dash {
+    color: var(--ink-dimmer);
+    font-size: 13px;
+  }
+  .yrp-compact { padding: 2px 8px 2px 10px; }
+  .yrp-compact .yrp-label { font-size: 9.5px; }
+  .yrp-compact select { font-size: 12px; padding: 3px 2px; }
+
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 28px;
+  }
+  .tab {
+    background: transparent;
+    border: none;
+    color: var(--ink-dimmer);
+    padding: 14px 20px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.15s;
+  }
+  .tab:hover { color: var(--ink-dim); }
+  .tab-active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* Dashboard */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .stat {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: var(--ink-dimmer);
+  }
+  .stat-done::before { background: var(--done); }
+  .stat-progress::before { background: var(--progress); }
+  .stat-risk::before { background: var(--risk); }
+  .stat-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: var(--ink-dimmer);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .stat-value {
+    font-family: 'Barlow Condensed', 'DIN Condensed', 'Helvetica Neue', sans-serif;
+    font-size: 42px;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .stat-meta {
+    font-size: 11.5px;
+    color: var(--ink-dim);
+    margin-top: 6px;
+  }
+
+  .dash-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .panel {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+  }
+  .panel-full { grid-column: 1 / -1; }
+  .panel-hdr {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .leaderboard { display: flex; flex-direction: column; gap: 12px; }
+  .lb-row {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    align-items: center;
+    gap: 14px;
+    padding: 4px 0;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .lb-row:hover { opacity: 0.75; }
+  .lb-owner {
+    font-family: 'Barlow Condensed', 'DIN Condensed', 'Helvetica Neue', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .lb-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+  }
+  .lb-segbar {
+    height: 8px;
+    background: var(--bg-3);
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+  }
+  .lb-seg { height: 100%; transition: width 0.4s; }
+  .lb-seg-done { background: var(--done); }
+  .lb-seg-inflight { background: var(--navy); }
+  .lb-seg-waiting { background: var(--waiting); opacity: 0.5; }
+  .lb-detail {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 11.5px;
+  }
+  .lb-pct {
+    color: var(--done);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    min-width: 36px;
+  }
+  .lb-counts {
+    color: var(--ink-dim);
+    font-variant-numeric: tabular-nums;
+  }
+  .lb-risk {
+    color: var(--risk);
+    font-weight: 600;
+    margin-left: auto;
+    font-size: 11px;
+  }
+
+  .proj-list { display: flex; flex-direction: column; gap: 6px; max-height: 340px; overflow-y: auto; }
+  .proj-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 14px;
+    padding: 8px 0;
+    cursor: pointer;
+    border-bottom: 1px solid var(--bg-3);
+  }
+  .proj-row:hover .proj-name { color: var(--accent); }
+  .proj-name {
+    font-size: 13px;
+    color: var(--ink);
+    transition: color 0.15s;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .proj-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--ink-dim);
+  }
+  .proj-count { font-variant-numeric: tabular-nums; min-width: 32px; text-align: right; }
+  .proj-track {
+    width: 70px;
+    height: 4px;
+    background: var(--bg-3);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .proj-fill {
+    height: 100%;
+    background: var(--done);
+    border-radius: 2px;
+  }
+  .proj-slips { color: var(--accent); font-weight: 600; }
+  .proj-risk { color: var(--risk); font-weight: 600; }
+
+  .attn-list { display: flex; flex-direction: column; }
+  .attn-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    cursor: pointer;
+    border-bottom: 1px solid var(--bg-3);
+    transition: padding 0.15s;
+  }
+  .attn-row:hover { padding-left: 6px; }
+  .attn-row:last-child { border-bottom: none; }
+  .attn-info { flex: 1; min-width: 0; }
+  .attn-output {
+    font-size: 13px;
+    color: var(--ink);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .attn-meta {
+    font-size: 11px;
+    color: var(--ink-dim);
+    margin-top: 2px;
+  }
+  .attn-arrow { color: var(--ink-dimmer); }
+  .empty-note { color: var(--ink-dimmer); font-size: 13px; padding: 12px 0; text-align: center; font-style: italic; }
+
+  /* Status pill */
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: color-mix(in srgb, var(--pill-color) 15%, transparent);
+    color: var(--pill-color);
+    border: 1px solid color-mix(in srgb, var(--pill-color) 40%, transparent);
+    border-radius: 999px;
+    padding: 3px 9px;
+    font-size: 11px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .status-pill:hover { background: color-mix(in srgb, var(--pill-color) 25%, transparent); }
+
+  /* Heatmap */
+  .v-heat { padding-top: 4px; }
+  .heatmap-wrap {
+    overflow-x: auto;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+  .heatmap {
+    display: grid;
+    gap: 2px;
+    min-width: 900px;
+  }
+  .hm-corner { }
+  .hm-header {
+    text-align: center;
+    padding: 6px 2px;
+    position: relative;
+  }
+  .hm-year-label {
+    position: absolute;
+    top: -4px;
+    left: 0;
+    right: 0;
+    text-align: left;
+    font-family: 'Barlow Condensed', 'DIN Condensed', 'Helvetica Neue', sans-serif;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 600;
+    padding-left: 4px;
+  }
+  .hm-q-label {
+    font-size: 10px;
+    color: var(--ink-dimmer);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    margin-top: 16px;
+  }
+  .hm-owner {
+    font-family: 'Barlow Condensed', 'DIN Condensed', 'Helvetica Neue', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    align-self: center;
+    padding: 6px 10px 6px 0;
+  }
+  .hm-cell {
+    aspect-ratio: 1 / 1;
+    background: var(--cell-bg);
+    border-radius: 3px;
+    display: grid;
+    place-items: center;
+    cursor: default;
+    transition: transform 0.1s;
+    min-height: 28px;
+  }
+  .hm-cell:hover { transform: scale(1.15); z-index: 2; }
+  .hm-year-start { border-left: 1px solid var(--line); padding-left: 2px; margin-left: 4px; }
+  .hm-tone-empty { background: var(--cell-bg); }
+  .hm-tone-inflight {
+    background: color-mix(in srgb, var(--accent) calc(var(--intensity) * 80%), var(--cell-bg));
+  }
+  .hm-tone-done {
+    background: color-mix(in srgb, var(--done) calc(var(--intensity) * 70% + 20%), var(--cell-bg));
+  }
+  .hm-tone-slip {
+    background: color-mix(in srgb, var(--risk) calc(var(--intensity) * 70% + 20%), var(--cell-bg));
+  }
+  .hm-count {
+    font-size: 11px;
+    font-weight: 700;
+    color: #ffffff;
+    font-variant-numeric: tabular-nums;
+  }
+  .hm-tone-empty .hm-count { color: var(--ink-dimmer); }
+  .hm-legend {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+    font-size: 11px;
+    color: var(--ink-dim);
+  }
+  .hm-leg-row { display: flex; align-items: center; gap: 6px; }
+  .hm-leg-box { width: 14px; height: 14px; border-radius: 3px; }
+
+  /* Risk view */
+  .v-risk { padding-top: 4px; }
+  .risk-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .risk-big {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px;
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+  .risk-big-num {
+    font-family: 'Barlow Condensed', 'DIN Condensed', 'Helvetica Neue', sans-serif;
+    font-size: 56px;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--accent);
+  }
+  .risk-big-lbl { color: var(--ink-dim); font-size: 13px; }
+  .risk-list { display: flex; flex-direction: column; gap: 10px; }
+  .risk-card {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.1s;
+  }
+  .risk-card:hover { border-left-color: var(--risk); transform: translateX(2px); }
+  .risk-card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+  .risk-owner {
+    font-family: 'Barlow Condensed', 'DIN Condensed', 'Helvetica Neue', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .risk-proj { font-size: 11.5px; color: var(--ink-dim); }
+  .risk-slips {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--risk);
+    font-weight: 600;
+  }
+  .risk-slip-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--risk);
+  }
+  .risk-output { color: var(--ink); font-size: 13px; margin-bottom: 8px; line-height: 1.4; }
+  .risk-timeline { display: flex; gap: 12px; flex-wrap: wrap; font-size: 11.5px; }
+  .risk-pin {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--ink-dim);
+    padding: 3px 8px;
+    background: var(--bg-3);
+    border-radius: 4px;
+  }
+  .risk-pin-slip { color: var(--risk); }
+  .risk-pin-done { color: var(--done); }
+  .rp-year { color: var(--ink-dimmer); font-weight: 600; font-size: 10px; }
+  .risk-notes {
+    margin-top: 8px;
+    font-size: 11.5px;
+    color: var(--ink-dimmer);
+    font-style: italic;
+    padding-top: 8px;
+    border-top: 1px dashed var(--line);
+  }
+
+  /* Table */
+  .toolbar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .search-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 0 10px;
+    flex: 1;
+    min-width: 220px;
+    max-width: 360px;
+    color: var(--ink-dim);
+  }
+  .search-wrap input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 13px;
+    padding: 9px 0;
+    outline: none;
+  }
+  .toolbar select, .toolbar input[type="text"] {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    padding: 8px 10px;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 12.5px;
+    outline: none;
+    cursor: pointer;
+  }
+  .toolbar select:hover { border-color: var(--line-2); }
+
+  .multi-select {
+    position: relative;
+    display: inline-block;
+  }
+  .ms-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    padding: 8px 10px;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 12.5px;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .ms-trigger:hover { border-color: var(--line-2); }
+  .ms-open .ms-trigger { border-color: var(--accent); }
+  .ms-label {
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--ink-dimmer);
+    text-transform: uppercase;
+  }
+  .ms-value {
+    color: var(--ink);
+  }
+  .ms-chev {
+    color: var(--ink-dimmer);
+    font-size: 9px;
+    margin-left: 2px;
+  }
+  .ms-popover {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    z-index: 50;
+    min-width: 180px;
+    background: var(--bg-2);
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius);
+    padding: 6px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .ms-opt {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12.5px;
+    color: var(--ink-dim);
+    transition: background 0.1s;
+    user-select: none;
+  }
+  .ms-opt:hover { background: var(--bg-3); color: var(--ink); }
+  .ms-opt-checked { color: var(--ink); }
+  .ms-opt input[type="checkbox"] {
+    accent-color: var(--accent);
+    margin: 0;
+  }
+  .ms-clear {
+    margin-top: 4px;
+    padding: 6px 10px;
+    background: transparent;
+    border: none;
+    border-top: 1px solid var(--line);
+    color: var(--ink-dimmer);
+    font-family: inherit;
+    font-size: 11px;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 0;
+  }
+  .ms-clear:hover { color: var(--accent); }
+  .check-tog {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: var(--ink-dim);
+    cursor: pointer;
+    user-select: none;
+  }
+  .check-tog input { accent-color: var(--accent); }
+  .tb-count {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--ink-dimmer);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tbl-wrap {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow-x: auto;
+  }
+  .tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+  }
+  .tbl thead th {
+    background: var(--bg-3);
+    color: var(--ink-dimmer);
+    font-weight: 600;
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  .tbl tbody tr {
+    border-bottom: 1px solid var(--bg-3);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .tbl tbody tr:hover { background: var(--bg-3); }
+  .tbl td {
+    padding: 10px 12px;
+    vertical-align: middle;
+  }
+  .td-proj {
+    font-family: 'Barlow Condensed', 'DIN Condensed', 'Helvetica Neue', sans-serif;
+    font-size: 13px;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .td-owner {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 12px;
+  }
+  .td-owner .participant-count {
+    margin-left: 6px;
+    color: var(--ink-dimmer);
+    font-size: 10px;
+    font-weight: 500;
+    background: var(--bg-3);
+    padding: 1px 5px;
+    border-radius: 3px;
+    cursor: help;
+  }
+  .status-stack {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .validated-tick {
+    color: var(--done);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    padding: 2px 5px;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--done) 18%, transparent);
+    border: 1px solid color-mix(in srgb, var(--done) 35%, transparent);
+    cursor: help;
+  }
+
+  .validation-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--bg-3);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .validation-row:hover { background: color-mix(in srgb, var(--done) 5%, var(--bg-3)); }
+  .validation-row input[type="checkbox"] {
+    accent-color: var(--done);
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    cursor: pointer;
+  }
+  .validation-disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  .validation-disabled:hover { background: var(--bg-3); }
+  .validation-disabled input[type="checkbox"] { cursor: not-allowed; }
+  .validation-label {
+    font-size: 13px;
+    color: var(--ink);
+    user-select: none;
+  }
+  .validation-hint {
+    color: var(--ink-dimmer);
+    font-size: 11.5px;
+    font-style: italic;
+  }
+  .validation-stamp {
+    color: var(--done);
+    font-size: 11.5px;
+    font-weight: 600;
+  }
+  .td-out { max-width: 420px; }
+  .td-out-main { color: var(--ink); line-height: 1.4; }
+  .td-out-notes {
+    color: var(--ink-dimmer);
+    font-size: 11px;
+    margin-top: 2px;
+    font-style: italic;
+  }
+  .td-q { text-align: center; min-width: 70px; }
+  .q-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 7px;
+    border-radius: 3px;
+    font-size: 11.5px;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+  }
+  .q-normal { background: var(--bg-3); color: var(--ink); }
+  .q-slipped {
+    background: color-mix(in srgb, var(--risk) 18%, var(--bg-3));
+    color: var(--risk);
+    border: 1px solid color-mix(in srgb, var(--risk) 40%, transparent);
+  }
+  .q-done {
+    background: color-mix(in srgb, var(--done) 18%, var(--bg-3));
+    color: var(--done);
+    border: 1px solid color-mix(in srgb, var(--done) 40%, transparent);
+  }
+  .q-done .q-missed { color: var(--done); opacity: 0.6; }
+  .q-empty { color: var(--ink-dimmer); }
+  .q-strike { text-decoration: line-through; opacity: 0.6; }
+  .q-arrow { opacity: 0.7; }
+  .q-new { font-weight: 700; }
+  .q-missed { color: var(--risk); margin-left: 2px; font-size: 9px; }
+  .td-slip { text-align: center; }
+  .slip-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--risk);
+    font-weight: 600;
+    font-size: 11px;
+  }
+  .slip-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--risk);
+  }
+  .slip-none { color: var(--ink-dimmer); }
+
+  .th-q, .th-slip { text-align: center; }
+
+  /* Modal */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 8, 5, 0.72);
+    backdrop-filter: blur(4px);
+    display: grid;
+    place-items: center;
+    z-index: 100;
+    padding: 20px;
+    animation: fade-in 0.15s ease-out;
+  }
+  @keyframes fade-in { from { opacity: 0 } to { opacity: 1 } }
+  .modal {
+    background: var(--bg-2);
+    border: 1px solid var(--line-2);
+    border-radius: 8px;
+    max-width: 820px;
+    width: 100%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .modal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .modal-project {
+    font-family: 'Barlow Condensed', 'DIN Condensed', 'Helvetica Neue', sans-serif;
+    font-size: 20px;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .modal-owner {
+    font-size: 11px;
+    color: var(--ink-dimmer);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+  .modal-body {
+    padding: 20px 24px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .modal-foot {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 14px 24px;
+    border-top: 1px solid var(--line);
+  }
+  .field { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .field-row { display: flex; gap: 14px; }
+  .field-lbl {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: var(--ink-dimmer);
+    text-transform: uppercase;
+  }
+  .field input, .field textarea, .field select {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    padding: 8px 10px;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+    resize: vertical;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--accent); }
+
+  .status-picker { display: flex; gap: 6px; flex-wrap: wrap; }
+  .sp-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 11.5px;
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--ink-dim);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .sp-btn:hover { color: var(--ink); border-color: var(--line-2); }
+  .sp-active {
+    background: color-mix(in srgb, var(--pill-color) 18%, transparent);
+    color: var(--pill-color);
+    border-color: color-mix(in srgb, var(--pill-color) 50%, transparent);
+  }
+
+  .years-editor { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .year-box {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 8px;
+  }
+  .year-active { border-color: var(--accent-2); }
+  .year-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .year-label {
+    font-family: 'Barlow Condensed', 'DIN Condensed', 'Helvetica Neue', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .mini-btn {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--ink-dim);
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+  }
+  .mini-btn:hover { color: var(--ink); border-color: var(--line-2); }
+  .mini-add { color: var(--accent); }
+  .year-fields { display: flex; flex-direction: column; gap: 4px; }
+  .yf-row {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    align-items: center;
+    gap: 6px;
+  }
+  .yf-row-quarter {
+    grid-template-columns: 40px 1fr 1fr;
+  }
+  .yf-month {
+    font-size: 10px !important;
+    color: var(--ink-dim) !important;
+  }
+  .yf-month:hover, .yf-month:focus { color: var(--accent) !important; }
+  .yf-lbl {
+    font-size: 9.5px;
+    color: var(--ink-dimmer);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .yf-row select, .yf-row input {
+    background: var(--bg-3);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    padding: 3px 6px;
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 11px;
+    outline: none;
+  }
+
+  .btn-primary, .btn-secondary {
+    font-family: inherit;
+    font-size: 13px;
+    padding: 8px 16px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+    font-weight: 600;
+  }
+  .btn-primary:hover { background: color-mix(in srgb, var(--accent) 85%, white); }
+  .btn-secondary {
+    background: transparent;
+    border-color: var(--line);
+    color: var(--ink-dim);
+  }
+  .btn-secondary:hover { color: var(--ink); border-color: var(--line-2); }
+  .btn-danger {
+    font-family: inherit;
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid color-mix(in srgb, var(--risk) 50%, transparent);
+    color: var(--risk);
+    transition: all 0.15s;
+  }
+  .btn-danger:hover {
+    background: color-mix(in srgb, var(--risk) 12%, transparent);
+    border-color: var(--risk);
+  }
+  .btn-new {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    padding: 7px 12px;
+    border-radius: var(--radius);
+    background: var(--accent);
+    color: var(--bg);
+    border: 1px solid var(--accent);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-new:hover { background: color-mix(in srgb, var(--accent) 85%, white); }
+  .field-err {
+    color: var(--risk);
+    font-size: 9.5px;
+    font-weight: 700;
+    margin-left: 6px;
+    letter-spacing: 0.05em;
+    text-transform: lowercase;
+  }
+  .input-err {
+    border-color: var(--risk) !important;
+    background: color-mix(in srgb, var(--risk) 6%, transparent);
+  }
+  .modal-eyebrow {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  /* Font imports */
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700&display=swap');
+
+  @media (max-width: 900px) {
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .dash-grid { grid-template-columns: 1fr; }
+    .risk-summary { grid-template-columns: 1fr; }
+    .years-editor { grid-template-columns: repeat(2, 1fr); }
+    .field-row { flex-direction: column; }
+  }
+`;
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(React.createElement(TeamOutputsApp));
+
+</script>
+</body>
+</html>
